@@ -1,0 +1,101 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+		    "path" : "pages/login/login",
+		    "style" :                                                                                    
+		    {
+             "topWindow": false,
+			 "leftWindow": false
+		    }
+		    
+		},
+		
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		
+		}
+	    ,{
+            "path" : "pages/filedwonload/filedwonload",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/drawingimf/drawingimf",
+            "style" :                                                                                    
+            {
+                "leftWindow": true
+            }
+            
+        }
+
+        ,{
+            "path" : "pages/NavBar/NavBar",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/user/user",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "window/window",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+ 
+        ,{
+            "path" : "pages/blanke/blanke",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
+
+	"globalStyle": {
+		"navigationStyle": "custom",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {},
+	"topWindow": {
+	  "path": "window/topwindow",
+	  "style": {
+	    "height": "46px",
+		"border-bottom": "#939393 solid 1px",
+		"display": "flex",
+		"flex-direction": "row",
+		"align-items": "center"
+	  }
+	},
+	"leftWindow": {
+	  "path": "window/leftwindow",
+	  "style": {
+		"display": "flex",
+	    "height": "100%",
+		"width": "20vw",
+		"border-right": "#939393 solid 1px"
+	  }
+	}
+}
