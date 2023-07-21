@@ -1,24 +1,28 @@
 <template>
 	<view class="content_all">
-		<view class="content_1 content">
-			<view class="header">
-			</view>
-			<view style="margin-top: 20upx;font-size: 25px;">报检系统后台管理端</view>
+
+		<view class="content_1">
+			<view style="font-size: 25px;color: #fff;">报检系统后台管理端</view>
 			<view class="list">
-				<view class="list-call" >
+				<view class="list-item">
+<input class="user-input" v-model="phoneno" type="number" maxlength="11" placeholder="请输入账号" />
+				</view>
+				<view class="list-item">
+					<input class="password-input" v-model="password" type="text" maxlength="32" placeholder="请输入密码" />
+				</view>
+				<view class="list-item">
+					<button class='button-login' typ='default' @click="bindLogin()">登 录</button>
+				</view>
+				<!-- <view class="list-call" >
 					<image class="img" src="/static/shilu-login/phone.png"></image>
 					<input class="biaoti" v-model="phoneno" type="number" maxlength="11" placeholder="请输入账号" />
 				</view>
 				<view class="list-call" style="margin-top: 20upx;">
 					<image class="img" src="/static/shilu-login/block.png"></image>
 					<input class="biaoti" v-model="password" type="text" maxlength="32" placeholder="请输入密码" password="true" />
-				</view>
+				</view> -->
 			</view>
-			<view class="blank"></view>
-			<button class='button-login' type = 'default' @click="bindLogin()">登 录</button>
-		
 		</view>
-		
 	</view>
 </template>
 
@@ -113,48 +117,77 @@
 
 <style>
 	.button-login{
-		margin-top: 10upx;
-		height: 40upx;
-		width: 250upx;
+		/* margin-top: 10upx; */
+		height: 25rpx;
+		width: 100%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-size: 15upx;
+		font-size: 12upx;
+		border-radius: 20rpx;
+		color: #012a6c;
 	}
 	.content_all{
 		display: flex;
-		justify-content: center;
-		flex-direction: row;
 		align-items: center;
 		height: 100vh;
 		width: 100%;
-		
+		background-image: url(../../static/assets/login/loginBackground.jpg);
+		background-size: 100% 100%;
+		background-repeat: no-repeat;
 	}
 	.content_1{
-		width: 50%;
-		height: 50%;
-		margin-left: 100upx;
-		
-	}
-	.content {
+		width: 30%;
+		height: 70%;
 		display: flex;
 		flex-direction: column;
-		/* justify-content:center; */
-		/* align-items: center; */
-		
-		
-	}
-	.header {
-		font-size: 50px;
-	}
-	
-	
+		align-items: center;
+		margin-left: 30rpx;
+		padding: 10rpx;
+	}	
 	.list {
+		position: relative;
+		width: 80%;
+		height: 40%;
+		padding: 10rpx;
+		border-radius: 8px;
+		/* box-shadow: 0 0 6px rgba(0, 0, 0, .04); */
+		border: 1rpx solid #aaa;
+		margin-top: 10rpx;
 		display: flex;
 		flex-direction: column;
-		padding-top: 40upx;
-		/* padding-left: 70upx;
-		padding-right: 70upx; */
+		align-items: center;
+		justify-content: space-evenly;
+	}
+	.list::before{
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(255, 255, 255,0.1); 
+		filter: blur(5px);
+	}
+	.list-item{
+		width: 80%;
+	}
+	.list .list-item input{
+		width: 100%;
+		height: 25rpx;
+		border-radius: 20rpx;
+		border: 1rpx solid #FFFFFF;
+		background-color: rgb(240, 238, 239,0;);
+		color:#FFFFFF;
+		padding-left: 10rpx;
+		/* margin-top: 10rpx; */
+
+	}
+	
+	.uni-input-input, .uni-input-placeholder {
+	    margin-left: 10px;
+	    width: 100%;
+		color:#fff;
 	}
 	.list-call{
 		display: flex;
@@ -165,7 +198,6 @@
 		color: #333333;
 		width: 500upx;
 		margin-bottom: 3upx;
-		
 		padding: 20upx;
 		background-color: #F6F4FC;
 		
