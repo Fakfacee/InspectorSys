@@ -8,7 +8,7 @@
 <input class="user-input" v-model="phoneno" type="number" maxlength="11" placeholder="请输入账号" />
 				</view>
 				<view class="list-item">
-					<input class="password-input" v-model="password" type="text" maxlength="32" placeholder="请输入密码" />
+					<input class="password-input" v-model="password" type="text" maxlength="32" placeholder="请输入密码"  password="true" />
 				</view>
 				<view class="list-item">
 					<button class='button-login' typ='default' @click="bindLogin()">登 录</button>
@@ -118,7 +118,7 @@
 <style>
 	.button-login{
 		/* margin-top: 10upx; */
-		height: 25rpx;
+		height: 45rpx;
 		width: 100%;
 		display: flex;
 		align-items: center;
