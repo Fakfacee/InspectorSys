@@ -5,7 +5,7 @@
 			<view style="font-size: 25px;color: #fff;">报检系统后台管理端</view>
 			<view class="list">
 				<view class="list-item">
-<input class="user-input" v-model="phoneno" type="number" maxlength="11" placeholder="请输入账号" />
+                <input class="user-input" v-model="phoneno" type="number" maxlength="11" placeholder="请输入账号" />
 				</view>
 				<view class="list-item">
 					<input class="password-input" v-model="password" type="text" maxlength="32" placeholder="请输入密码"  password="true" />
@@ -71,6 +71,13 @@
 						}else if(res.data.Status ==1){
 						var result = res.data
 						//姓名
+						uni.setStorage({
+							key:'userimf',
+							data:result,
+							success:function(){
+								
+							}
+						})
 						getApp().globalData.name = result.Name,
 						//承包商
 						getApp().globalData.subcontractor = result.Contractor,

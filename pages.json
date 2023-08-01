@@ -48,8 +48,8 @@
             "path" : "pages/user/user",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
+                "leftWindow": true,
+				"topWindow": true
             }
             
         }
@@ -72,6 +72,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/fileupload/fileupload",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 
 	"globalStyle": {
@@ -84,17 +93,16 @@
 	  "style": {
 	    "height": "46px",
 		"border-bottom": "#939393 solid 1px",
-		"display": "flex",
-		"flex-direction": "row",
-		"align-items": "center"
+		"display": "flex"
+
 	  }
 	},
 	"leftWindow": {
 	  "path": "window/leftwindow",
 	  "style": {
 		"display": "flex",
-	    "height": "100%",
-		"width": "20vw",
+	    "height": "100vh",
+		"width": "18vw",
 		"border-right": "#939393 solid 1px"
 	  }
 	}

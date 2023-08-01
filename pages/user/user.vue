@@ -1,53 +1,26 @@
 <template>
-	<view>
-		<view class="top_box">
-		   <image src="/pages/image/titleUser.jpg" class = "titleUser"/>
-		</view>
-		
-		<view class="graydivide"></view>
-		
-		<view class='function'>
-		  <view style="width:100%">
-		    <view class="functioninformation" ><!--左边图片&文字-->
-		      <view class="imf-text">姓名</view><!--文字-->
-		      <view class="imf-text">{{name}}</view><!--文字-->
-		    </view>
-		  </view>
-		</view>
-		<view class="whitedivide"></view>
-		<view class='function'>
-		  <view style="width:100%">
-		    <view class="functioninformation" ><!--左边图片&文字-->
-		      <view class="imf-text">单位</view><!--文字-->
-		      <view class="right-text">{{subcontractor}}</view><!--文字-->
-		    </view>
-		  </view>
-		</view>
-		<view class="whitedivide"></view>
-		<view class='function'>
-		  <view style="width:100%">
-		    <view class="functioninformation" ><!--左边图片&文字-->
-		      <view class="imf-text">工种</view><!--文字-->
-		      <view class="right-text">{{useridentity}}</view><!--文字-->
-		    </view>
-		  </view>
-		</view>
-		<view class="whitedivide"></view>
-		<view class='function'>
-		  <view style="width:100%">
-		    <view class="functioninformation" ><!--左边图片&文字-->
-		      <view class="imf-text">工号</view><!--文字-->
-		      <view class="right-text">{{welderno}}</view><!--文字-->
-		    </view>
-		  </view>
-		</view>
-		
-		<view class = 'blanke'></view>
-		<view class="logOut-box">
-		  <view class = 'log-out' @click="logOut">登出</view>
-		
+
+	<view class = "window-box">
+		<view class = "func-box">
+			<view class="imf-text">姓名</view>
+			<view class="imf-text">{{name}}</view>
+			<view class="gray-line"></view>
+			<view class="imf-text">单位</view>
+			<view class="imf-text">{{subcontractor}}</view>
+			<view class="gray-line"></view>
+			<view class="imf-text">工种</view>
+			<view class="imf-text">{{useridentity}}</view>
+			<view class="gray-line"></view>
+			<view class="imf-text">工号</view>
+			<view class="imf-text">{{welderno}}</view>
+			<view class="gray-line"></view>
+			<button class = "button" @click="logOut">登出</button>
+   	
 		</view>
 	</view>
+	
+	
+
 </template>
 
 <script>
@@ -85,15 +58,22 @@
 			
 		},
 		onLoad() {
-			this.name = getApp().globalData.name
-			this.subcontractor =  getApp().globalData.subcontractor
-			//权限类别
-			this.useridentity= getApp().globalData.useridentity
-			//userid
-			this.userid = getApp().globalData.userid
-			//powerid 区分界面显示
-			this.powerid =  getApp().globalData.powerid
-			this.welderno = getApp().globalData.welderno	
+			uni.getStorage({
+				key:'userimf',
+				success: (res) => {
+					var userdata = res.data
+					this.name = userdata.Name
+					this.subcontractor =  userdata.Contractor
+					//权限类别
+					this.useridentity= userdata.User_Identity
+					//userid
+					this.userid = userdata.UserId
+					//powerid 区分界面显示
+					this.powerid =  userdata.Powerid
+					this.welderno = userdata.WelderNo	
+				}
+			})
+
 		}
 	}
 </script>
@@ -104,68 +84,37 @@
 page{/*页面背景—————统一浅灰*/
   background-color: #ededed;
 }
-.top_box{/*顶部空白栏*/
-  
-  background-color: aliceblue;
-  width: 100%;
-  height: 120px;
-}
-.titleUser{
-width: 100%;
-height: 100%;
-}
 
-.text {/*文字*/
-  font-size: 20px;
-  font-style: normal;
-  font-weight: normal;
-  width: 80px;
-  height: 40px;
-  position: relative;
-  left: 5px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: #000000;
-}
-.right-text {/*右边文字*/
-display: flex;
-height: 20px;
-font-size: 20px;
-flex-direction: column;
-justify-content: center;
-color: #000000;
-position: relative;
-}
-.blanke{
-background-color: #ededed;
-height: 80px;
-
-}
-.logOut-box{
-width: 100%;
-background-color: #ededed;
-display: flex;
-justify-content: center;
-}
-.log-out{
-  background-color: #ffffff;
-  width:60% ;
-  height: 35px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.whitedivide {/*白色分割线 - 改灰色*/ 
-  height: 1px;
-  background-color: #ededed;
-  width: 100%;
-  position:relative;
-  top: 0px;
-}
 
 .function{
 	background-color: #ffffff;
 	
 }
+.window-box{
+	display: flex;
+	flex-direction: column;
+}
+.func-box {
+    position: relative;
+    left: 60rpx;
+    margin: 40rpx 0;
+    width: 40%;
+    height: 90vh;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+	}
+.button{
+	position: relative;
+	width: 240rpx;
+	top: 80rpx;
+	left: 12vw;
+	display: flex;
+	flex-direction: row;
+	font-size: 14rpx;
+	margin-left: 10px;
+	height: 28px;
+    align-items: center;
+	justify-content: center;
+
+	}
 </style>

@@ -1,7 +1,7 @@
 <template>
 	<view class = "box-window">
 	    <view class = "box-function">
-	    	<view class="box-funcList">
+			<view class="box-funcList">
 				<view class="imf-text">功能列表</view>
 				 <view class="fuc-list"
 				      v-for="(item, index) in functionList"
@@ -13,7 +13,7 @@
 					>  
 				      {{ item }}
 				</view>
-			</view>	
+	        </view>
 	    	<view class="box-funcPage">
 			</view>
 	    </view>
@@ -29,11 +29,12 @@
 		data() {
 			return {
 				title: 'Hello',
-				functionList: ["基础数据查看", "数据下载"], // 功能列表
+				functionList: ["基础数据查看", "数据下载","数据上传"], // 功能列表
 				activeIndex: -1 ,// 当前激活的功能索引
 				functionActions: [
 				      this.dataOperation, // 绑定功能1对应的触发函数
 				      this.fileDwonload, // 绑定功能2对应的触发函数
+					  this.fileUpload, 
 				    ]
 			}
 		},
@@ -65,6 +66,12 @@
 				        })
 	
 			},
+			fileUpload(){
+				        uni.navigateTo({
+				        	url :'/pages/fileupload/fileupload'
+				        })
+				
+			},
 			queryPage(){
 				        console.log('按钮queryPage触发成功'),
 				    uni.navigateTo({
@@ -84,7 +91,7 @@
 	        display: flex;
 		}
 		.box-title {
-			width: 100vw;
+			width: 100%;
 			height: 6vh;
 			background-color: #FFFFFF;
 			display: flex;
@@ -94,8 +101,8 @@
 		}
 		
 		.box-function {
-			width: 100vw;
-			height: 90vh;
+			width: 18vw;
+			height: 100vh;
 			background-color:#FFFFFF ;
 			display: flex;
 			justify-content: left;
@@ -103,15 +110,17 @@
 			
 		}
 		.fuc-list{
+			width: 80%;
 			display: flex;
+			position: relative;
+		    left: 50rpx;
 			justify-content: center;
 			align-items: center;
 			
 		}
 		.box-funcList {
-			width: 24vw;
-			height: 90vh;
-			background-color: #FFFFFF;
+			width: 100%;
+			
 
 		}
 		.box-funcPage {

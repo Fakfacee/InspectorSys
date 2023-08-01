@@ -20,7 +20,7 @@
 			<uni-table ref="table" :loading="loading" border stripe type="selection" emptyText="暂无更多数据" @selection-change="selectionChange">
 				<uni-tr>
 					<uni-th width="150" align="center">图纸号</uni-th>
-					<uni-th width="150" align="center">焊口号</uni-th>
+					<uni-th width="70" align="center">焊口号</uni-th>
 					<uni-th width="150" align="center">单管号</uni-th>
 					<uni-th width="70" align="center">管径</uni-th>
 					<uni-th width="70" align="center">材质</uni-th>
@@ -32,7 +32,7 @@
 					<uni-th width="220" align="center">操作</uni-th>
 				</uni-tr>
 				<uni-tr v-for="(item, index) in tableDataShow" :key="index" >
-				  <uni-td>
+				  <uni-td align="center">
 				    <template v-if="!item.editable">{{ item.DrawingNo }}</template>
 				    <input v-else v-model="item.DrawingNo" />
 				  </uni-td>
@@ -49,8 +49,8 @@
 				    <input v-else v-model="item.Size" />
 				  </uni-td>
 				  <uni-td align="center">
-				    <template v-if="!item.editable">{{ item.Material}}</template>
-				    <input v-else v-model="item.Material" />
+				    <template v-if="!item.editable">{{ item.MaterialId}}</template>
+				    <input v-else v-model="item.MaterialId" />
 				  </uni-td>
 				  <uni-td align="center">
 				    <template v-if="!item.editable">{{ item.ZuDuiDate }}</template>
@@ -69,7 +69,10 @@
 				    <input v-else v-model="item.AppearanceInspectDate" />
 				  </uni-td>
 				  <uni-td align="center">
-				    <template v-if="!item.editable">{{ item.AppearanceResult}}</template>
+				    <template v-if="!item.editable">
+					<view v-if = "item.AppearanceResult">ACC</view>
+					<view v-else>{{item.AppearanceResult}}</view>
+					</template>
 				    <input v-else v-model="item.AppearanceResult" />
 				  </uni-td>
 				  <uni-td>
@@ -81,6 +84,7 @@
 				  </uni-td>
 				</uni-tr>
 			</uni-table>
+			
 			<view class="uni-pagination-box"><uni-pagination show-icon :page-size="pageSize" :current="pageCurrent" :total="total" @change="change" /></view>
 		</view>
 	</view>
@@ -91,6 +95,10 @@ import Vue from 'vue'
 export default {
 	data() {
 		return {
+			item: {
+			    AppearanceResult: 1, // 假设这是 item 对象中的属性
+			    editable: false // 假设这是 item 对象中的属性
+			},
 			isEditing:false,
 			searchVal: '',
 			tableDataShow: [{'DrawingNo':'数据加载中，请稍后'},{'DrawingNo':''}],
@@ -107,9 +115,11 @@ export default {
 			rowData : null,
 		}
 	},
+
 	onLoad() {
 		//将数据存储在本地读取，刷新更新
-	    this.powerid = getApp().globalData.powerid,
+		let userdata = uni.getStorageSync('userimf')
+	    this.powerid = userdata.PowerId,
 		
 		uni.request({
 			url:getApp().globalData.url+'databaseget',
@@ -125,6 +135,7 @@ export default {
 					var resultList = [];
 					var i;
 					this.tableData = res.data;
+					
 					
 					this.dataLoaded = true
 					
@@ -348,7 +359,7 @@ export default {
   vertical-align: middle;
 }
 .box-title{
-	height: 40px;
+	height: 60px;
 	display: flex;
 	flex-direction: row;
     align-items: center;	
@@ -391,6 +402,12 @@ export default {
 	display: flex;
 	flex-direction: column;
 	width: 80vw;
+	
+}
+.table-line{
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
 	
 }
 </style>
