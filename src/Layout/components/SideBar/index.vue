@@ -8,6 +8,7 @@
     default-active="/index"
     class="el-menu-vertical-demo"
     router
+    :collapse="false"
     style="height: 94%;"
   >
     <el-menu-item index="/index">
@@ -30,10 +31,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref,inject,watch } from "vue";
 import { House, Document, Download, Upload } from "@element-plus/icons-vue";
 
-const isCollapse = ref(false)
+
+const isCollapse = inject('collapse')
+console.log(isCollapse);
 </script>
 
 <style lang="scss" scoped>
