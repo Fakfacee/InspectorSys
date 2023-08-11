@@ -1,0 +1,174 @@
+<template>
+  <div class="container">
+    <div class="login">
+      <div class="login-header">
+        <h1>报检系统后台管理端</h1>
+      </div>
+      <div class="login-title">
+        <span
+          style="
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 0.5rex;
+            margin-right: 5px;
+          "
+          >登录</span
+        >
+        <span style="color: #cccccc">Signup</span>
+      </div>
+      <el-form
+        ref="loginFormRef"
+        :model="loginForm"
+        status-icon
+        label-width="120px"
+        class="login-form"
+        label-position="top"
+        :rules="rules"
+      >
+        <el-form-item label="账号" prop="username">
+          <el-input
+            autocomplete="off"
+            maxlength="11"
+            :prefix-icon="User"
+            v-model="loginForm.username"
+            placeholder="请输入账号"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input
+            type="password"
+            autocomplete="off"
+            :prefix-icon="Lock"
+            v-model="loginForm.password"
+            maxlength="32"
+            clearable
+            placeholder="请输入密码"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleLogin(loginFormRef)"
+            >登录</el-button
+          >
+        </el-form-item>
+      </el-form>
+      <div class="navbar">
+        <p>没有账号？<el-link>去注册</el-link></p>
+      </div>
+      <div class="footer">
+        <p>@2023保留所有权利。Fikristudio.com Cookie偏好、隐私和条款。</p>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { User, Lock } from "@element-plus/icons-vue";
+import { ref, reactive } from "vue";
+import { loginRequest } from "../../Network/login.js";
+import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
+
+const router = useRouter();
+
+const loginForm = reactive({
+  username: "",
+  password: "",
+});
+
+const rules = reactive({
+  username: [{ required: true, message: "请输入用户账号", trigger: "blur" }],
+  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+});
+
+const loginFormRef = ref();
+async function handleLogin(formEl) {
+  console.log(loginForm);
+  if (!formEl) return;
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+      loginRequest(loginForm)
+        .then((res) => {
+          if (res.status === 200) {
+            if (res.data.Status === 1) {
+              ElMessage.success("登录成功！");
+              router.push({
+                path: "/layout",
+              });
+            } else {
+              return Promise.reject(res.data.Note);
+            }
+          }
+        })
+        .catch((error) => {
+          ElMessage.error(error);
+        });
+    } else {
+      console.log("error submit!", fields);
+    }
+  });
+}
+</script>
+
+<style lang="scss" scoped>
+.container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(../../assets/image/login/loginBackground.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .login {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(15%, 15%);
+    width: 30%;
+    height: 70%;
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 25px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    box-shadow: 1px 0px 2px 1px #cecece;
+    .login-header {
+      text-align: center;
+      color: #20525c;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 20px;
+    }
+    .login-title {
+      padding: 0 25px;
+      color: #2f3c4b;
+    }
+    .login-form {
+      margin-top: 40px;
+      padding: 0px 25px;
+      .el-button {
+        width: 100%;
+        height: 40px;
+        margin-top: 20px;
+      }
+      .el-input {
+        height: 40px;
+      }
+    }
+    .navbar {
+      padding: 0 25px;
+      text-align: right;
+    }
+    .footer {
+      position: absolute;
+      bottom: 30px;
+      color: #aaa;
+    }
+  }
+}
+</style>
