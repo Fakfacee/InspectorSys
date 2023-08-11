@@ -1,7 +1,8 @@
 <template>
   <el-row justify="space-between" align="center">
-    <el-col :span="8" style="display: flex; align-items: center;">
+    <el-col :span="8" style="display: flex; align-items: center">
       <div class="left-side">
+        <!-- <el-button :icon="Operation" @click="handleCollapse" /> -->
         <el-breadcrumb separator="/">
           <el-breadcrumb-item
             v-for="router in routers"
@@ -30,7 +31,9 @@
                 <el-dropdown-item @click="() => routerPush('/personalCenter')"
                   >个人中心</el-dropdown-item
                 >
-                <el-dropdown-item @click="() => routerPush('/')">退出登录</el-dropdown-item>
+                <el-dropdown-item @click="() => routerPush('/')"
+                  >退出登录</el-dropdown-item
+                >
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -41,8 +44,8 @@
 </template>
 
 <script setup>
-import { Refresh, FullScreen } from "@element-plus/icons-vue";
-import { computed } from "vue";
+import { Refresh, FullScreen, Operation } from "@element-plus/icons-vue";
+import { computed, provide,ref } from "vue";
 import { useRouter } from "vue-router";
 // const route = useRoute()
 const router = useRouter();
@@ -53,6 +56,12 @@ const routers = computed(() => {
 function routerPush(path) {
   router.push(path);
 }
+
+const isCollapse = ref(false);
+function handleCollapse() {
+  isCollapse.value = !isCollapse.value;
+}
+provide("collapse", isCollapse);
 </script>
 
 <style lang="scss" scope>
@@ -69,10 +78,10 @@ function routerPush(path) {
     font-size: 32px;
   }
 }
-.tabs{
+.tabs {
   position: absolute;
-  bottom:0;
-  .el-tabs__header{
+  bottom: 0;
+  .el-tabs__header {
     margin: 0;
   }
 }

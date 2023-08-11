@@ -1,4 +1,4 @@
-import { request } from "./index.js";
+import request  from "./index.js";
 
 export function loginRequest(formData){
     return request({

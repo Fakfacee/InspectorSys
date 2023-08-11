@@ -19,13 +19,32 @@
           ></el-form-item
         >
         <el-form-item
-          ><el-button :icon="Edit" plain type="success" disabled
+          ><el-button
+            :icon="Edit"
+            plain
+            type="success"
+            :disabled="!(selectList.length == 1)"
+            @click="handleUpdate(selectList[0])"
             >修改</el-button
           ></el-form-item
         >
         <el-form-item
-          ><el-button :icon="Delete" plain type="danger" disabled
+          ><el-button
+            :icon="Delete"
+            plain
+            type="danger"
+            :disabled="!(selectList.length >= 1)"
+            @click="handleDelete"
             >删除</el-button
+          ></el-form-item
+        >
+        <el-form-item
+          ><el-button
+            :icon="Download"
+            plain
+            type="warning"
+            @click="handleExport"
+            >导出</el-button
           ></el-form-item
         >
       </el-form>
@@ -35,11 +54,17 @@
           :data="tableData"
           v-loading="loading"
           element-loading-text="加载中..."
-          @select="handleSelect"
-          @select-all="handleSelect"
+          @select="handleSelectionChange"
+          @select-all="handleSelectionAll"
           height="750"
         >
           <el-table-column type="selection" width="55" />
+          <el-table-column
+            type="index"
+            width="55"
+            label="序号"
+            align="center"
+          />
           <el-table-column
             label="图纸号"
             show-overflow-tooltip
@@ -122,7 +147,7 @@
                 link
                 type="primary"
                 :disabled="scope.row.isExchange == 0"
-                @click="handleDel(scope.row)"
+                @click="handleDelete(scope.row)"
                 >删除
               </el-button>
             </template>
@@ -159,18 +184,12 @@
       <el-row>
         <el-col :span="20">
           <el-form-item label="图纸号" prop="DrawingNo">
-            <el-input
-              v-model="formData.DrawingNo"
-              placeholder="请输入图纸号"
-            />
+            <el-input v-model="formData.DrawingNo" placeholder="请输入图纸号" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="焊口号" prop="WeldNo">
-            <el-input
-              v-model="formData.WeldNo"
-              placeholder="请输入焊口号"
-            />
+            <el-input v-model="formData.WeldNo" placeholder="请输入焊口号" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -180,20 +199,14 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="材质" prop="MaterialId">
-            <el-select
-              v-model="formData.MaterialId"
-              placeholder="请选择材质"
-            >
+            <el-select v-model="formData.MaterialId" placeholder="请选择材质">
               <el-option label="CS" value="CS" />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="20">
           <el-form-item label="单管号" prop="PipeNo">
-            <el-input
-              v-model="formData.PipeNo"
-              placeholder="请输入单管号"
-            />
+            <el-input v-model="formData.PipeNo" placeholder="请输入单管号" />
           </el-form-item>
         </el-col>
 
@@ -270,10 +283,12 @@ import {
   Edit,
   Delete,
   RefreshLeft,
+  Download,
 } from "@element-plus/icons-vue";
 import { baseDataList, dataUpdate } from "@/Network/data.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { reactive, ref, toRaw, toRefs } from "vue";
+import {downLoad} from '@/Network/index'
 
 const state = reactive({
   tableData: [],
@@ -317,7 +332,7 @@ const state = reactive({
   // AppearanceResult: [],
 });
 
-const { tableData, formData } = toRefs(state)
+const { tableData, formData } = toRefs(state);
 
 const allData = ref([]);
 const currentPage = ref(1);
@@ -331,11 +346,7 @@ async function dataListRequest() {
     .then((res) => {
       if (res.status === 200) {
         allData.value = res.data;
-        tableData.value = res.data.slice(
-          (currentPage.value - 1) * pageSize.value,
-          currentPage.value * pageSize.value
-        );
-        dataTotal.value = res.data.length;
+        dataPaging();
       } else return Promise.reject(res);
     })
     .catch((erro) => {
@@ -345,17 +356,30 @@ async function dataListRequest() {
 }
 dataListRequest();
 
+const queriedList = ref(undefined);
+//分页
+function dataPaging(list) {
+  if (!queriedList.value) queriedList.value = list;
+  console.log(queriedList.value, "queriedList.value");
+  let res = queriedList.value ? queriedList.value : allData.value;
+  tableData.value = res.slice(
+    (currentPage.value - 1) * pageSize.value,
+    currentPage.value * pageSize.value
+  );
+  dataTotal.value = res.length;
+}
+
 //翻页
 function handleCurrentChange(val) {
   currentPage.value = val;
-  dataListRequest();
+  dataPaging();
 }
 
 //页条目数改变
 function handleSizeChange(val) {
   pageSize.value = val;
   currentPage.value = 1;
-  dataListRequest();
+  dataPaging();
 }
 
 const formTitle = ref(undefined);
@@ -365,16 +389,22 @@ function handleUpdate(row) {
   formTitle.value = "修改表单";
   dialogVisible.value = true;
   const originalData = JSON.parse(JSON.stringify(row));
-  formData.value = originalData
+  formData.value = originalData;
 }
 
 //删除
-function handleDel(row) {
-  ElMessageBox.confirm(`确定要删除图纸号为${row.DrawingNo}的数据吗？`, "警告", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
-  })
+function handleDelete(row) {
+  ElMessageBox.confirm(
+    `确定要删除图纸号为${
+      row.DrawingNo || selectList.value.map((item) => item.DrawingNo)
+    }的数据吗？`,
+    "系统提示",
+    {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+    }
+  )
     .then(() => {
       ElMessage({
         type: "success",
@@ -387,15 +417,33 @@ function handleDel(row) {
 //搜索
 const queryData = ref(undefined);
 function handleSearch() {
+  queriedList.value = null;
   console.log(queryData.value, "queryDAta");
-  let res = allData.value.filter((item) => item.DrawingNo == queryData.value);
+  let res = allData.value.filter(
+    (item) =>
+      item.DrawingNo == queryData.value ||
+      item.DrawingNo.includes(queryData.value)
+  );
   tableData.value = res;
   dataTotal.value = res.length;
+  dataPaging(res);
 }
 
 //重置表格
 function handleReset() {
+  queryData.value = undefined;
+  queriedList.value = null;
   dataListRequest();
+}
+
+//勾选
+const selectList = ref([]);
+function handleSelectionChange(selection, row) {
+  selectList.value = selection;
+}
+//全部勾选
+function handleSelectionAll(selection) {
+  selectList.value = selection;
 }
 
 //新增表单
@@ -416,7 +464,6 @@ function handleAddForm() {
   };
 }
 
-
 //保存
 const ruleFormRef = ref();
 const saveLoading = ref(false);
@@ -428,7 +475,7 @@ async function handleSave(formEl) {
       // dataUpdate(state.formData)
       //   .then(res => console.log(res))
       setTimeout(() => {
-        tableData.value = [...tableData.value]
+        tableData.value = [...tableData.value];
         saveLoading.value = false;
         dialogVisible.value = false;
         ElMessage.success("保存成功");
@@ -437,6 +484,11 @@ async function handleSave(formEl) {
       console.log("error submit!", fields);
     }
   });
+}
+
+//导出
+function handleExport() {
+  downLoad("downloadsumfile",`summary_${new Date().getTime()}.xlsx`);
 }
 </script>
 

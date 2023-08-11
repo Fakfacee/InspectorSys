@@ -1,4 +1,4 @@
-import { request } from "./index.js";
+import request from "./index.js";
 
 export function baseDataList() {
   return request({
