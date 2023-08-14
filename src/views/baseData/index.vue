@@ -38,17 +38,18 @@
             >删除</el-button
           ></el-form-item
         >
-        <el-form-item
-          ><el-button
-            :icon="Download"
-            plain
-            type="warning"
-            @click="handleExport"
-            >导出</el-button
-          ></el-form-item
-        >
       </el-form>
+    </el-col>
+    <el-col>
+      <el-button :icon="Download" plain type="warning" @click="handleExport('downloaddwrfile')"
+        >DWR下载</el-button
+      >
+      <el-button :icon="Download" plain type="warning" @click="handleExport('downloadsumfile')"
+        >焊口信息汇总表下载</el-button
+      >
+    </el-col>
 
+    <el-col :span="24">
       <div class="table-block">
         <el-table
           :data="tableData"
@@ -288,7 +289,7 @@ import {
 import { baseDataList, dataUpdate } from "@/Network/data.js";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { reactive, ref, toRaw, toRefs } from "vue";
-import {downLoad} from '@/Network/index'
+import { downLoad } from "@/Network/index";
 
 const state = reactive({
   tableData: [],
@@ -487,13 +488,14 @@ async function handleSave(formEl) {
 }
 
 //导出
-function handleExport() {
-  downLoad("downloadsumfile",`summary_${new Date().getTime()}.xlsx`);
+function handleExport(url) {
+  downLoad(url, `summary_${new Date().getTime()}.xlsx`);
 }
 </script>
 
 <style>
 .table-block {
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;

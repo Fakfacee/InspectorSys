@@ -9,7 +9,7 @@
           <el-avatar :size="86" :src="circleUrl" />
         </div>
         <div class="username-span">
-          ADMIN
+          {{Name}}
           <p class="roles">超级管理员</p>
         </div>
       </div>
@@ -32,7 +32,7 @@
                 姓名
               </div>
             </template>
-            kooriookami
+            {{ User_Identity }}
           </el-descriptions-item>
           <el-descriptions-item>
             <template #label>
@@ -43,7 +43,7 @@
                 联系方式
               </div>
             </template>
-            18100000000
+            {{ PhoneNo }}
           </el-descriptions-item>
           <el-descriptions-item>
             <template #label>
@@ -51,10 +51,10 @@
                 <el-icon :style="iconStyle">
                   <Location />
                 </el-icon>
-                工位
+                工号
               </div>
             </template>
-            Suzhou
+            {{ UserId }}
           </el-descriptions-item>
           <el-descriptions-item>
             <template #label>
@@ -62,10 +62,10 @@
                 <el-icon :style="iconStyle">
                   <tickets />
                 </el-icon>
-                备注
+                公司
               </div>
             </template>
-            <el-tag size="small">cooecfluor</el-tag>
+            <el-tag size="small">{{ Contractor }}</el-tag>
           </el-descriptions-item>
           <el-descriptions-item>
             <template #label>
@@ -73,10 +73,10 @@
                 <el-icon :style="iconStyle">
                   <office-building />
                 </el-icon>
-                地址
+                邮箱
               </div>
             </template>
-            珠海市高栏港区中海福陆重工有限公司
+            {{ Email || "无"}}
           </el-descriptions-item>
         </el-descriptions>
       </div>
@@ -85,14 +85,18 @@
 </template>
 
 <script setup>
-// import { computed, ref } from 'vue'
+import { computed, ref } from "vue";
 import {
   Iphone,
   OfficeBuilding,
   Location,
   Tickets,
   User,
-} from '@element-plus/icons-vue'
+} from "@element-plus/icons-vue";
+import { useUserStore } from "@/stores/user";
+const userStore = useUserStore();
+
+const { Name, PhoneNo, Email, Contractor, UserId, User_Identity } = userStore.userForm;
 </script>
 
 <style lang="scss" scoped>

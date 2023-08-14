@@ -1,16 +1,24 @@
 <template>
-  <el-row>
+  <!-- <el-row>
     <el-col :span="24" style="text-align: center;border-right: 1px solid #e0e0e0;">
       <h3>报检系统后台操作端</h3>
     </el-col>
-  </el-row>
+  </el-row> -->
   <el-menu
     default-active="/index"
-    class="el-menu-vertical-demo"
+    class="el-menu-container"
     router
-    :collapse="false"
-    style="height: 94%;"
+    :collapse="routeStore.isCollapse"
+    style="height: 100%;"
   >
+  <el-menu-item index="0">	
+    <el-icon v-if="routeStore.isCollapse"><WindPower /></el-icon>
+        <template #title>
+          <el-col style="text-align: center;">
+      <h3>报检系统后台操作端</h3>
+    </el-col>
+        </template>
+      </el-menu-item>
     <el-menu-item index="/index">
       <el-icon><House /></el-icon>
       <span>主页</span>
@@ -32,12 +40,15 @@
 
 <script setup>
 import { ref,inject,watch } from "vue";
-import { House, Document, Download, Upload } from "@element-plus/icons-vue";
+import { House, Document, Download, Upload,WindPower } from "@element-plus/icons-vue";
+import { useRouteStore } from '@/stores/app';
+const routeStore = useRouteStore()
 
-
-const isCollapse = inject('collapse')
-console.log(isCollapse);
 </script>
 
 <style lang="scss" scoped>
+.el-menu-container:not(.el-menu--collapse) {
+  width: 250px;
+  height: calc(100vh);
+}
 </style>

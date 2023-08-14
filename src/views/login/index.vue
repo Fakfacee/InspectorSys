@@ -47,6 +47,11 @@
           />
         </el-form-item>
         <el-form-item>
+          <el-checkbox v-model="loginForm.pwdChecked" class="remberPwd"
+            >记住密码</el-checkbox
+          >
+        </el-form-item>
+        <el-form-item>
           <el-button type="primary" @click="handleLogin(loginFormRef)"
             >登录</el-button
           >
@@ -56,7 +61,7 @@
         <p>没有账号？<el-link>去注册</el-link></p>
       </div>
       <div class="footer">
-        <p>@2023保留所有权利。Fikristudio.com Cookie偏好、隐私和条款。</p>
+        <p>粤公网安备 44049302000140号</p>
       </div>
     </div>
   </div>
@@ -64,17 +69,35 @@
 
 <script setup>
 import { User, Lock } from "@element-plus/icons-vue";
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { loginRequest } from "../../Network/login.js";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-
+import {useUserStore} from "@/stores/user"
+const userStore = useUserStore()
 const router = useRouter();
 
 const loginForm = reactive({
   username: "",
   password: "",
+  pwdChecked: false,
 });
+
+onMounted(() => {
+  if (
+    localStorage.getItem("loginForm") != null &&
+    Object.keys(localStorage.getItem("loginForm").length > 2)
+  ) {
+    loginForm.pwdChecked = true;
+    let userPwdInfo = JSON.parse(localStorage.getItem("loginForm"));
+
+    loginForm.username = userPwdInfo.username;
+    loginForm.password = userPwdInfo.password;
+  } else {
+    loginForm.pwdChecked = false;
+  }
+});
+
 
 const rules = reactive({
   username: [{ required: true, message: "请输入用户账号", trigger: "blur" }],
@@ -91,6 +114,14 @@ async function handleLogin(formEl) {
         .then((res) => {
           if (res.status === 200) {
             if (res.data.Status === 1) {
+              if (loginForm.pwdChecked) {
+                localStorage.setItem("loginForm", JSON.stringify(loginForm));
+              } else {
+                localStorage.setItem("loginForm", JSON.stringify({}));
+              }
+
+              userStore.userForm = res.data
+              console.log(userStore.userForm);
               ElMessage.success("登录成功！");
               router.push({
                 path: "/layout",

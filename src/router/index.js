@@ -56,7 +56,7 @@ const router = createRouter({
 router.afterEach((to, from, next) => {
   const routeStore = useRouteStore();
   let result = routeStore.visitedRoutes.find((item) => item.name == to.name);
-  if (!result) {
+  if (!result && to.name) {
     routeStore.visitedRoutes.push(getRouteByName(to.name, router.getRoutes()));
   }
 });

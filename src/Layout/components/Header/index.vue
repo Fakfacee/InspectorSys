@@ -2,8 +2,8 @@
   <el-row justify="space-between" align="center">
     <el-col :span="8" style="display: flex; align-items: center">
       <div class="left-side">
-        <!-- <el-button :icon="Operation" @click="handleCollapse" /> -->
-        <el-breadcrumb separator="/">
+        <el-button link  :icon="routeStore.isCollapse ? Expand : Fold" @click="routeStore.changeCollapse" />
+        <el-breadcrumb separator="/" class="breadcrumb">
           <el-breadcrumb-item
             v-for="router in routers"
             :key="router.path"
@@ -44,10 +44,11 @@
 </template>
 
 <script setup>
-import { Refresh, FullScreen, Operation } from "@element-plus/icons-vue";
-import { computed, provide,ref } from "vue";
+import { Refresh, FullScreen, Fold, Expand } from "@element-plus/icons-vue";
+import { computed, provide, ref } from "vue";
 import { useRouter } from "vue-router";
-// const route = useRoute()
+import { useRouteStore } from "@/stores/app";
+const routeStore = useRouteStore();
 const router = useRouter();
 const routers = computed(() => {
   return router.currentRoute.value.matched.filter((item) => item.meta.title);
@@ -56,17 +57,21 @@ const routers = computed(() => {
 function routerPush(path) {
   router.push(path);
 }
-
-const isCollapse = ref(false);
-function handleCollapse() {
-  isCollapse.value = !isCollapse.value;
-}
-provide("collapse", isCollapse);
 </script>
 
 <style lang="scss" scope>
 .left-side {
+  width: 100%;
   margin-left: 20px;
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+  .el-button{
+
+  }
+  .breadcrumb{
+    font-size: 17px;
+  }
 }
 .right-side {
   padding: 10px;

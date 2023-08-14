@@ -1,16 +1,20 @@
 <template>
   <div class="common-layout">
     <div class="app-container">
-      <div class="side-bar"><side-bar /></div>
-      <div class="view-container">
+      <el-aside width="auto" class="side-bar">
+        <side-bar />
+      </el-aside>
+      <el-container class="view-container">
         <div class="header">
           <Header />
-          <div class="tags"><Tags /></div>
+          <!-- <div class="tags">
+            <Tags /> -->
+          <!-- </div> -->
         </div>
         <div class="app-main">
           <app-main />
         </div>
-      </div>
+      </el-container>
     </div>
   </div>
 </template>
@@ -29,21 +33,20 @@ import Tags from "./components/Tags/index.vue";
   width: 100vw;
   .app-container {
     height: 100%;
+    width: 100%;
     display: flex;
     .side-bar {
-      width: 15%;
       height: 100%;
     }
 
     .view-container {
       background-color: #fff;
-      width: 85%;
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
       .header {
         position: relative;
-        height: 10%;
+        /* height: 7%; */
         width: 100%;
         box-shadow: 2px 3px 4px 0px #d5d4d4;
         padding: 5px;
@@ -55,7 +58,7 @@ import Tags from "./components/Tags/index.vue";
 
       .app-main {
         width: 100%;
-        height: 90%;
+        /* height: 90%; */
         display: flex;
         flex-direction: column;
       }
