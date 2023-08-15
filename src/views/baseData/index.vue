@@ -41,11 +41,26 @@
       </el-form>
     </el-col>
     <el-col>
-      <el-button :icon="Download" plain type="warning" @click="handleExport('downloaddwrfile')"
+      <el-button
+        :icon="Download"
+        plain
+        type="warning"
+        @click="handleExport('downloaddwrfile')"
         >DWR下载</el-button
       >
-      <el-button :icon="Download" plain type="warning" @click="handleExport('downloadsumfile')"
+      <el-button
+        :icon="Download"
+        plain
+        type="warning"
+        @click="handleExport('downloadsumfile')"
         >焊口信息汇总表下载</el-button
+      >
+      <el-button
+        :icon="UploadFilled"
+        plain
+        type="primary"
+        @click="openUploadDialog"
+        >图纸上传</el-button
       >
     </el-col>
 
@@ -170,6 +185,7 @@
     </el-col>
   </el-row>
 
+  <!-- 表单弹窗 -->
   <el-dialog
     v-model="dialogVisible"
     :title="formTitle"
@@ -275,6 +291,45 @@
       </span>
     </template>
   </el-dialog>
+
+  <!-- 上传弹窗 -->
+  <el-dialog
+    v-model="UploaddialogVisible"
+    :before-close="handleClose"
+    :show-close="false"
+  >
+    <template #header="{ close, titleId, titleClass }">
+      <div class="my-header">
+        <span :id="titleId" :class="titleClass">图纸上传</span>
+        <el-button type="danger" @click="close">
+          <el-icon class="el-icon--left"><CircleCloseFilled /></el-icon>
+          关闭
+        </el-button>
+      </div>
+    </template>
+    <el-upload
+      v-model:file-list="fileList"
+      :http-request="httpRequest"
+      :before-upload="beforeUpload"
+      list-type="picture"
+    >
+      <el-button type="primary">选取文件</el-button>
+      <template #tip>
+        <div class="el-upload__tip">仅支持jpg格式文件且大小大于2MB</div>
+      </template>
+    </el-upload>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button
+          type="primary"
+          @click="uploadSubmit"
+          :loading="uploadLoading"
+        >
+          提交上传
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -285,9 +340,11 @@ import {
   Delete,
   RefreshLeft,
   Download,
+  UploadFilled,
+  CircleCloseFilled,
 } from "@element-plus/icons-vue";
-import { baseDataList, dataUpdate } from "@/Network/data.js";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { baseDataList, dataUpdate, drawingUpload } from "@/Network/data.js";
+import { ElMessage, ElMessageBox, ElButton, ElDialog } from "element-plus";
 import { reactive, ref, toRaw, toRefs } from "vue";
 import { downLoad } from "@/Network/index";
 
@@ -383,14 +440,16 @@ function handleSizeChange(val) {
   dataPaging();
 }
 
-const formTitle = ref(undefined);
 //修改弹窗
+const formTitle = ref(undefined);
+const rowData = ref(null);
 const dialogVisible = ref(false);
 function handleUpdate(row) {
   formTitle.value = "修改表单";
   dialogVisible.value = true;
   const originalData = JSON.parse(JSON.stringify(row));
   formData.value = originalData;
+  rowData.value = originalData;
 }
 
 //删除
@@ -470,17 +529,29 @@ const ruleFormRef = ref();
 const saveLoading = ref(false);
 async function handleSave(formEl) {
   if (!formEl) return;
-  await formEl.validate((valid, fields) => {
+  await formEl.validate(async (valid, fields) => {
     if (valid) {
-      saveLoading.value = true;
-      // dataUpdate(state.formData)
-      //   .then(res => console.log(res))
-      setTimeout(() => {
-        tableData.value = [...tableData.value];
+      const modifiedData = toRaw(formData.value);
+      for (const key in modifiedData) {
+        if (modifiedData[key] !== rowData.value[key]) {
+          modifiedData[key + "_edible"] = true;
+        } else {
+          modifiedData[key + "_edible"] = false;
+        }
+      }
+      modifiedData.activitytype = 'edit'
+      modifiedData.editable = true
+      try {
+        saveLoading.value = true;
+        let res = await dataUpdate(modifiedData).data;
+        console.log(res);
         saveLoading.value = false;
         dialogVisible.value = false;
         ElMessage.success("保存成功");
-      }, 1000);
+      } catch (error) {
+        console.log(error);
+        ElMessage.error(error);
+      }
     } else {
       console.log("error submit!", fields);
     }
@@ -491,6 +562,41 @@ async function handleSave(formEl) {
 function handleExport(url) {
   downLoad(url, `summary_${new Date().getTime()}.xlsx`);
 }
+
+//上传
+const UploaddialogVisible = ref(false);
+function openUploadDialog() {
+  UploaddialogVisible.value = true;
+}
+
+const fileList = ref([]);
+const beforeUpload = (rawFile) => {
+  if (rawFile.type !== "image/jpeg") {
+    ElMessage.error("文件仅支持JPG格式！");
+    return false;
+  } else if (rawFile.size / 1024 / 1024 > 2) {
+    ElMessage.error("文件最大不能超过 2MB!");
+    return false;
+  }
+  return true;
+};
+
+function httpRequest(opt) {
+  // console.log(opt);
+  // console.log(fileList.value);
+  // fileList.value.push(opt);
+  const { file, onSuccess, onFail } = opt;
+  const formData = new FormData();
+  formData.append("image", file);
+  console.log(formData);
+  drawingUpload(formData)
+    .then(res => console.log(res,'res'))
+}
+
+const uploadLoading = ref(false);
+function uploadSubmit() {
+  uploadLoading.value = true;
+}
 </script>
 
 <style>
@@ -500,5 +606,10 @@ function handleExport(url) {
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
+}
+.my-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 </style>

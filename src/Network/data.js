@@ -18,3 +18,11 @@ export function dataUpdate(formData) {
     data: formData,
   });
 }
+
+export function drawingUpload(data) {
+  return request({
+    url: "uploadtableimf",
+    method: "post",
+    data:data
+  })
+}
