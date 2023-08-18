@@ -32,6 +32,7 @@ instance.interceptors.response.use(
   },
   (error) => {
     console.error("响应发生错误", error);
+    ElMessage.error("响应发生错误",error.message)
     return Promise.reject(error);
   }
 )

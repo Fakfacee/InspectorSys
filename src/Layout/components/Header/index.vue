@@ -2,7 +2,11 @@
   <el-row justify="space-between" align="center">
     <el-col :span="8" style="display: flex; align-items: center">
       <div class="left-side">
-        <el-button link  :icon="routeStore.isCollapse ? Expand : Fold" @click="routeStore.changeCollapse" />
+        <el-button
+          link
+          :icon="routeStore.isCollapse ? Expand : Fold"
+          @click="routeStore.changeCollapse"
+        />
         <el-breadcrumb separator="/" class="breadcrumb">
           <el-breadcrumb-item
             v-for="router in routers"
@@ -21,7 +25,12 @@
             :underline="false"
             style="font-size: 20px; margin-right: 5px"
           />
-          <el-link :icon="Refresh" :underline="false" style="font-size: 20px" />
+          <el-link
+            :icon="Refresh"
+            :underline="false"
+            style="font-size: 20px"
+            @click="reload"
+          />
         </div>
         <div class="avatar">
           <el-dropdown>
@@ -57,6 +66,10 @@ const routers = computed(() => {
 function routerPush(path) {
   router.push(path);
 }
+
+function reload() {
+  location.reload();
+}
 </script>
 
 <style lang="scss" scope>
@@ -66,10 +79,9 @@ function routerPush(path) {
   display: flex;
   align-items: center;
   column-gap: 20px;
-  .el-button{
-
+  .el-button {
   }
-  .breadcrumb{
+  .breadcrumb {
     font-size: 17px;
   }
 }

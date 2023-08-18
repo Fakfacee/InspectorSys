@@ -1,9 +1,9 @@
 <template>
   <el-row :gutter="30">
     <el-col :span="24">
-      <el-form :inline="true" label-width="70px">
+      <el-form :inline="true" label-width="55px">
         <el-form-item label="单管号">
-          <el-input clearable style="width: 200px" v-model="queryData" />
+          <el-input clearable style="width: 230px" v-model="queryData" />
         </el-form-item>
         <el-form-item>
           <el-button :icon="Search" type="primary" @click="handleSearch"
@@ -560,7 +560,7 @@ async function handleSave(formEl) {
 
 //导出
 function handleExport(url) {
-  downLoad(url, `summary_${new Date().getTime()}.xlsx`);
+  downLoad(url, `summary_${new Date().toLocaleDateString('zh-CN', { year: '2-digit', month: '2-digit', day: '2-digit' })}.xlsx`);
 }
 
 //上传
