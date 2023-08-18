@@ -6,7 +6,7 @@
       </div>
       <div class="info-block">
         <div class="avatar">
-          <el-avatar :size="86" :src="circleUrl" />
+          <el-avatar :size="86" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
         </div>
         <div class="username-span">
           {{Name}}

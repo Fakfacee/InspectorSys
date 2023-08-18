@@ -11,7 +11,7 @@
     :collapse="routeStore.isCollapse"
     style="height: 100%;"
   >
-  <el-menu-item index="0">	
+  <el-menu-item index="#">	
     <el-icon v-if="routeStore.isCollapse"><WindPower /></el-icon>
         <template #title>
           <el-col style="text-align: center;">
@@ -27,14 +27,14 @@
       <el-icon><Document /></el-icon>
       <span>基础数据查看</span>
     </el-menu-item>
-    <el-menu-item index="/dataDownload">
+    <!-- <el-menu-item index="/dataDownload">
       <el-icon><Download /></el-icon>
       <span>数据下载</span>
     </el-menu-item>
     <el-menu-item index="/dataUpload">
       <el-icon><Upload /></el-icon>
       <span>数据上传</span>
-    </el-menu-item>
+    </el-menu-item> -->
   </el-menu>
 </template>
 
