@@ -5,7 +5,7 @@ import "nprogress/nprogress.css";
 import { ElNotification , ElMessageBox, ElMessage, ElLoading } from 'element-plus'
 
 const instance = axios.create({
-  baseURL: "/api",
+  baseURL: process.env.VUE_APP_BASE_API,
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",

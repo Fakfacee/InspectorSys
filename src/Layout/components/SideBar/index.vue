@@ -5,7 +5,7 @@
     </el-col>
   </el-row> -->
   <el-menu
-    default-active="/index"
+    :default-active="route.fullPath"
     class="el-menu-container"
     router
     :collapse="routeStore.isCollapse"
@@ -42,6 +42,8 @@
 import { ref,inject,watch } from "vue";
 import { House, Document, Download, Upload,WindPower } from "@element-plus/icons-vue";
 import { useRouteStore } from '@/stores/app';
+import { useRoute } from "vue-router";
+const route = useRoute()
 const routeStore = useRouteStore()
 
 </script>

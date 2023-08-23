@@ -294,26 +294,22 @@
 
   <!-- 上传弹窗 -->
   <el-dialog
+  class="uploadDialog"
     v-model="UploaddialogVisible"
     :before-close="handleClose"
-    :show-close="false"
+    title="图纸上传"
   >
-    <template #header="{ close, titleId, titleClass }">
-      <div class="my-header">
-        <span :id="titleId" :class="titleClass">图纸上传</span>
-        <el-button type="danger" @click="close">
-          <el-icon class="el-icon--left"><CircleCloseFilled /></el-icon>
-          关闭
-        </el-button>
-      </div>
-    </template>
     <el-upload
+      :action="action()"
       v-model:file-list="fileList"
-      :http-request="httpRequest"
+      :on-change="changeFile"
       :before-upload="beforeUpload"
       list-type="picture"
+      :data="uploadForm"
     >
-      <el-button type="primary">选取文件</el-button>
+      <template #trigger>
+        <el-button type="primary">选取文件</el-button>
+      </template>
       <template #tip>
         <div class="el-upload__tip">仅支持jpg格式文件且大小大于2MB</div>
       </template>
@@ -386,11 +382,12 @@ const state = reactive({
       },
     ],
   },
-  // AppearanceInspectDate: [],
-  // AppearanceResult: [],
+  uploadForm: {
+    user: 'test'
+  }
 });
 
-const { tableData, formData } = toRefs(state);
+const { tableData, formData, uploadForm } = toRefs(state);
 
 const allData = ref([]);
 const currentPage = ref(1);
@@ -539,8 +536,8 @@ async function handleSave(formEl) {
           modifiedData[key + "_edible"] = false;
         }
       }
-      modifiedData.activitytype = 'edit'
-      modifiedData.editable = true
+      modifiedData.activitytype = "edit";
+      modifiedData.editable = true;
       try {
         saveLoading.value = true;
         let res = await dataUpdate(modifiedData).data;
@@ -560,7 +557,14 @@ async function handleSave(formEl) {
 
 //导出
 function handleExport(url) {
-  downLoad(url, `summary_${new Date().toLocaleDateString('zh-CN', { year: '2-digit', month: '2-digit', day: '2-digit' })}.xlsx`);
+  downLoad(
+    url,
+    `summary_${new Date().toLocaleDateString("zh-CN", {
+      year: "2-digit",
+      month: "2-digit",
+      day: "2-digit",
+    })}.xlsx`
+  );
 }
 
 //上传
@@ -581,25 +585,44 @@ const beforeUpload = (rawFile) => {
   return true;
 };
 
-function httpRequest(opt) {
-  // console.log(opt);
-  // console.log(fileList.value);
-  // fileList.value.push(opt);
-  const { file, onSuccess, onFail } = opt;
-  const formData = new FormData();
-  formData.append("image", file);
-  console.log(formData);
-  drawingUpload(formData)
-    .then(res => console.log(res,'res'))
+function changeFile(uploadFile) {
+  console.log(uploadFile);
+  fileList.value.push(uploadFile)
 }
+
+// function httpRequest(opt) {
+//   const { file, onSuccess, onFail } = opt;
+//   const formData = new FormData();
+//   formData.append("file", file);
+//   formData.append("user", "test");
+//   console.log(formData.get("file"));
+//   // drawingUpload(formData).then((res) => console.log(res, "res"));
+// }
 
 const uploadLoading = ref(false);
 function uploadSubmit() {
   uploadLoading.value = true;
+  const jsonStr = JSON.stringify(uploadForm)
+  const blob = new Blob([jsonStr], {
+    type: 'application/json'
+  })
+  let formData = new FormData()
+  formData.append("obj", blob)
+  formData.append("file", fileList.value[0].raw)
+  console.log(formData.get('file'));
+  drawingUpload(formData)
+    .then((res) => {
+      console.log(res);
+      uploadLoading.value = false
+    })
+}
+
+function action() {
+  return process.env.VUE_APP_BASE_API + '/uploadtableimf'
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .table-block {
   margin-top: 10px;
   display: flex;
@@ -611,5 +634,8 @@ function uploadSubmit() {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+.my-header{
+  margin-right: 0;
 }
 </style>
