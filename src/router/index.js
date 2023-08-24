@@ -12,32 +12,32 @@ const routes = [
   {
     path: "/layout",
     component: Layout,
-    redirect: "/index",
+    redirect: "/baseData",
     children: [
-      {
-        path: "/index",
-        component: () => import("@/views/home/index.vue"),
-        name: "homeIndex",
-        meta: { title: "主页", icon: "" },
-      },
+      // {
+      //   path: "/index",
+      //   component: () => import("@/views/home/index.vue"),
+      //   name: "homeIndex",
+      //   meta: { title: "主页", icon: "" },
+      // },
       {
         path: "/baseData",
         component: () => import("@/views/baseData/index.vue"),
         name: "baseData",
         meta: { title: "基础数据查看", icon: "" },
       },
-      {
-        path: "/dataDownload",
-        component: () => import("@/views/dataDownload/index.vue"),
-        name: "dataDownload",
-        meta: { title: "数据下载", icon: "" },
-      },
-      {
-        path: "/dataUpload",
-        component: () => import("@/views/dataUpload/index.vue"),
-        name: "dataUpload",
-        meta: { title: "数据上传", icon: "" },
-      },
+      // {
+      //   path: "/dataDownload",
+      //   component: () => import("@/views/dataDownload/index.vue"),
+      //   name: "dataDownload",
+      //   meta: { title: "数据下载", icon: "" },
+      // },
+      // {
+      //   path: "/dataUpload",
+      //   component: () => import("@/views/dataUpload/index.vue"),
+      //   name: "dataUpload",
+      //   meta: { title: "数据上传", icon: "" },
+      // },
       {
         path: "/personalCenter",
         component: () => import("@/views/personalCenter/index.vue"),

@@ -8,8 +8,8 @@
         <div class="header">
           <Header />
           <!-- <div class="tags">
-            <Tags /> -->
-          <!-- </div> -->
+            <Tags />
+          </div> -->
         </div>
         <div class="app-main">
           <app-main />
@@ -29,14 +29,11 @@ import Tags from "./components/Tags/index.vue";
 <style lang="scss" scoped>
 .common-layout {
   position: relative;
-  height: 100vh;
-  width: 100vw;
   .app-container {
     height: 100%;
     width: 100%;
     display: flex;
     .side-bar {
-      height: 100%;
     }
 
     .view-container {

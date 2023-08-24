@@ -294,7 +294,7 @@
 
   <!-- 上传弹窗 -->
   <el-dialog
-  class="uploadDialog"
+    class="uploadDialog"
     v-model="UploaddialogVisible"
     :before-close="handleClose"
     title="图纸上传"
@@ -383,8 +383,8 @@ const state = reactive({
     ],
   },
   uploadForm: {
-    user: 'test'
-  }
+    user: "test",
+  },
 });
 
 const { tableData, formData, uploadForm } = toRefs(state);
@@ -402,9 +402,11 @@ async function dataListRequest() {
       if (res.status === 200) {
         allData.value = res.data;
         dataPaging();
+        return Promise.resolve();
       } else return Promise.reject(res);
     })
     .catch((erro) => {
+      ElMessage.error(erro);
       console.log(erro);
     });
   loading.value = false;
@@ -521,7 +523,7 @@ function handleAddForm() {
   };
 }
 
-//保存
+//修改保存
 const ruleFormRef = ref();
 const saveLoading = ref(false);
 async function handleSave(formEl) {
@@ -529,6 +531,7 @@ async function handleSave(formEl) {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       const modifiedData = toRaw(formData.value);
+      modifiedData.editable = true;
       for (const key in modifiedData) {
         if (modifiedData[key] !== rowData.value[key]) {
           modifiedData[key + "_edible"] = true;
@@ -536,15 +539,18 @@ async function handleSave(formEl) {
           modifiedData[key + "_edible"] = false;
         }
       }
-      modifiedData.activitytype = "edit";
-      modifiedData.editable = true;
+      modifiedData.type = "edit";
       try {
         saveLoading.value = true;
-        let res = await dataUpdate(modifiedData).data;
+        let res = await dataUpdate({
+          tableData: modifiedData,
+        }).data;
         console.log(res);
         saveLoading.value = false;
         dialogVisible.value = false;
-        ElMessage.success("保存成功");
+        dataListRequest().then((data) => {
+          ElMessage.success("保存成功");
+        });
       } catch (error) {
         console.log(error);
         ElMessage.error(error);
@@ -573,6 +579,7 @@ function openUploadDialog() {
   UploaddialogVisible.value = true;
 }
 
+//上传限制
 const fileList = ref([]);
 const beforeUpload = (rawFile) => {
   if (rawFile.type !== "image/jpeg") {
@@ -587,7 +594,7 @@ const beforeUpload = (rawFile) => {
 
 function changeFile(uploadFile) {
   console.log(uploadFile);
-  fileList.value.push(uploadFile)
+  fileList.value.push(uploadFile);
 }
 
 // function httpRequest(opt) {
@@ -599,26 +606,26 @@ function changeFile(uploadFile) {
 //   // drawingUpload(formData).then((res) => console.log(res, "res"));
 // }
 
+//上传提交
 const uploadLoading = ref(false);
 function uploadSubmit() {
   uploadLoading.value = true;
-  const jsonStr = JSON.stringify(uploadForm)
+  const jsonStr = JSON.stringify(uploadForm);
   const blob = new Blob([jsonStr], {
-    type: 'application/json'
-  })
-  let formData = new FormData()
-  formData.append("obj", blob)
-  formData.append("file", fileList.value[0].raw)
-  console.log(formData.get('file'));
-  drawingUpload(formData)
-    .then((res) => {
-      console.log(res);
-      uploadLoading.value = false
-    })
+    type: "application/json",
+  });
+  let formData = new FormData();
+  formData.append("obj", blob);
+  formData.append("file", fileList.value[0].raw);
+  console.log(formData.get("file"));
+  drawingUpload(formData).then((res) => {
+    console.log(res);
+    uploadLoading.value = false;
+  });
 }
 
 function action() {
-  return process.env.VUE_APP_BASE_API + '/uploadtableimf'
+  return process.env.VUE_APP_BASE_API + "/uploadtableimf";
 }
 </script>
 
@@ -634,8 +641,5 @@ function action() {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
-.my-header{
-  margin-right: 0;
 }
 </style>

@@ -19,10 +19,10 @@
     </el-col>
         </template>
       </el-menu-item>
-    <el-menu-item index="/index">
+    <!-- <el-menu-item index="/index">
       <el-icon><House /></el-icon>
       <span>主页</span>
-    </el-menu-item>
+    </el-menu-item> -->
     <el-menu-item index="/baseData">
       <el-icon><Document /></el-icon>
       <span>基础数据查看</span>

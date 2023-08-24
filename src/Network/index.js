@@ -6,7 +6,7 @@ import { ElNotification , ElMessageBox, ElMessage, ElLoading } from 'element-plu
 
 const instance = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 5000,
+  timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
@@ -32,7 +32,6 @@ instance.interceptors.response.use(
   },
   (error) => {
     console.error("响应发生错误", error);
-    ElMessage.error("响应发生错误",error.message)
     return Promise.reject(error);
   }
 )
@@ -50,6 +49,7 @@ export function downLoad(url, fileName) {
         link.download = fileName;
         link.click()
         downloadLoadingInstance.close();
+        ElMessage.success('下载成功')
     }).catch((r) => {
         console.error(r)
         ElMessage.error('下载文件出现错误！')
