@@ -6,8 +6,8 @@
 			<view class="input-box">
 				<input class = 'input' type="text" v-model="inputValue" placeholder="请选择需要上传文件" />
 				<view class="button-box">
-				<button class = 'button-filechoose' @click="openFileExplorer">选择文件</button>
-				<button class = 'button-filechoose' @click="submit">上传</button>
+				  <button class = 'button-filechoose' @click="openFileExplorer">选择文件</button>
+				  <button class = 'button-filechoose' @click="uploadFile">上传</button>
 				</view>
 			</view>
 			</view>
@@ -23,6 +23,8 @@
 export default {
   data() {
 	return {
+		inputValue:null,
+		tempFilePaths:null,
 		powerid: null,
 	}
 	},
@@ -37,18 +39,21 @@ export default {
         count: 1, // 最多选择的文件数量
         success: (res) => {
 		  const tempFilePaths = res.tempFilePaths;
+		  var fileName = tempFilePaths[0].split('/').pop(); // 获取文件名
           const file = res.tempFiles;
-		  this.uploadFile(tempFilePaths);
+		  //this.uploadFile(tempFilePaths);
           // 处理选择的文件
-          console.log(file);
-		  
+          console.log(file[0]);
+		  this.inputValue = file[0].name
+		  this.tempFilePaths = tempFilePaths
         },
         fail: (err) => {
           console.error('选择文件失败', err);
         }
       });
     },
-	    uploadFile(file) {
+	    uploadFile() {
+		var file = this.tempFilePaths
 		uni.uploadFile({
 			url: getApp().globalData.url + 'uploadtableimf',
 			filePath: file[0],
@@ -58,6 +63,12 @@ export default {
 			},
 			success:(uploadFileRes)=>{
 				console.log(uploadFileRes.data)
+				uni.showToast({
+				        title: '文件上传成功',
+				        icon: 'none',
+				        duration: 1000,
+				        mask: true,
+				});
 			}
 		})
 	   
@@ -86,31 +97,24 @@ export default {
 	}
 	.input-box{
 		display: flex;
-        flex-direction: row;
-		align-items: center;
-		margin-left: 40rpx;
-		
+        flex-direction: column;
+		margin-left: 10rpx;
 		
 	}
 	.input{
 		border: 1px solid black;
-		
+		margin-left: 20px;
+		width: 60%;
 	}
 	.button-filechoose{
-		display: flex;
-		flex-direction: row;
-		font-size: 14rpx;
-	    margin-left: 10px;
-	    height: 28px;
-        align-items: center;
+        font-size: 20rpx;
 		
 	}
 	.button-box{
-		display: flex;
+		width: 40%;
+        display: flex;
 		flex-direction: row;
-		justify-content: flex-end;
-        margin-left: 80rpx;
-	
+		margin-top: 20rpx;
 	}
 	.gray-blank{
 		margin-top: 80rpx;

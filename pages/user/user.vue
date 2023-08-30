@@ -58,7 +58,7 @@
 			
 		},
 		onLoad() {
-			uni.getStorage({
+			uni.getStorageSync({
 				key:'userimf',
 				success: (res) => {
 					var userdata = res.data

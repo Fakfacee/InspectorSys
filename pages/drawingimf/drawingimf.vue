@@ -4,8 +4,8 @@
 			<view class="blank-box"></view>
 			<!-- 输入框 -->
 			<input class="input-label" type="text" v-model="searchVal" @confirm="search" placeholder="输入单管号"/>
-			
-		<view class="button-group">
+			<view class="blank-box"></view>
+		    <view class="button-group">
 			<!-- 搜索按钮 -->
 			<button class="button" type= "default"@click="search">搜索</button>
 			
@@ -14,7 +14,7 @@
 		
 			<!-- 批量删除按钮 -->
 			<button class="button" type="warn" @click="delTable" v-if="powerid == 1">删除</button>
-		</view>
+		    </view>
 		</view>
 		<view class="uni-container">
 			<uni-table ref="table" :loading="loading" border stripe type="selection" emptyText="暂无更多数据" @selection-change="selectionChange">
@@ -26,10 +26,11 @@
 					<uni-th width="70" align="center">材质</uni-th>
 					<uni-th width="70" align="center">组对日期</uni-th>
 					<uni-th width="70" align="center">组对检验日期</uni-th>
-					<uni-th width="70" align="center">焊接日期</uni-th>
+					<uni-th width="120" align="center">工艺</uni-th>
+					<uni-th width="70" align="center">焊工号</uni-th>
 					<uni-th width="70" align="center">外观检验日期</uni-th>
 					<uni-th width="70" align="center">外观检验结果</uni-th>
-					<uni-th width="220" align="center">操作</uni-th>
+					<uni-th width="170" align="center">操作</uni-th>
 				</uni-tr>
 				<uni-tr v-for="(item, index) in tableDataShow" :key="index" >
 				  <uni-td align="center">
@@ -61,8 +62,12 @@
 				    <input v-else v-model="item.ZuDuiInspectDate" />
 				  </uni-td>
 				  <uni-td align="center">
-				    <template v-if="!item.editable">{{ item.WeldingDate }}</template>
-				    <input v-else v-model="item.WeldingDate" />
+				    <template v-if="!item.editable">{{ item.WPS }}</template>
+				    <input v-else v-model="item.WPS" />
+				  </uni-td>
+				  <uni-td align="center">
+				    <template v-if="!item.editable">{{ item.WelderNo}}</template>
+				    <input v-else v-model="item.WelderNo" />
 				  </uni-td>
 				  <uni-td align="center">
 				    <template v-if="!item.editable">{{ item.AppearanceInspectDate }}</template>
@@ -135,7 +140,7 @@ export default {
 					var resultList = [];
 					var i;
 					this.tableData = res.data;
-					
+					this.tableData.sort((a, b) => new Date(b.ZuDuiDate) - new Date(a.ZuDuiDate));
 					
 					this.dataLoaded = true
 					
@@ -158,14 +163,20 @@ export default {
 	methods: {
 		//搜索匹配
 		search() {
-
-		    const regex = new RegExp(this.searchVal, 'i'); // 创建不区分大小写的正则表达式
-		    const filteredData = this.tableDataShow.filter(item => {
-		      return regex.test(item.DrawingNo); // 使用正则表达式进行模糊匹配
-		    });
-			console.log(filteredData)
-		      // 更新表格数据
-		    this.tableDataShow = filteredData;
+            if(this.searchVal.length == 0){
+			    uni.showToast({
+			      title: '输入单管不能为空',
+			      icon: 'none'
+			    })	
+			}else{
+				const regex = new RegExp(this.searchVal, 'i'); // 创建不区分大小写的正则表达式
+				const filteredData = this.tableData.filter(item => {
+				  return regex.test(item.DrawingNo); // 使用正则表达式进行模糊匹配
+				});
+				console.log(filteredData)
+				  // 更新表格数据
+				this.tableDataShow = filteredData;
+			}
 		    },
 		onKeyInput(e){
 			console.log(e)
@@ -366,19 +377,19 @@ export default {
 
 }
 .blank-box{
-	width: 80px;
+	width: 10%;
 	
 }
 .button-group{
  display: flex;
  flex-direction: row;
  justify-content: space-between;
- width: 60%;
+ width: 40%;
 
 }
 .input-label{
 	border: 1px solid #ccc;
-	width: 200px;
+	width: 30%;
 	
 }
 .button{

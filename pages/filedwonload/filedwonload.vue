@@ -8,6 +8,41 @@
             <button class="button" @click='downloadSumFile'>点击开始下载</button>
             <view class="gray-blank"></view>
 		</view>
+		
+		
+		<view class = "func-box">
+			<view class="imf-text">VT信息下载</view>
+			<view class="imf-text-second ">开始日期</view>
+			<view class="date-box">
+			<uni-section :title="'日期用法：' + single" type="line"></uni-section>
+			<view class="example-body">
+				<uni-datetime-picker type="date" :clear-icon="false" v-model="StartDate"/>
+			</view>
+			</view>
+			<view class="imf-text-second ">结束日期</view>
+			<view class="date-box">
+			<uni-section :title="'日期用法：' + single" type="line"></uni-section>
+			<view class="example-body">
+				<uni-datetime-picker type="date" :clear-icon="false" v-model="EndDate" />
+			</view>
+			</view>
+            <button class="button" @click='downloadVtFile'>下载</button>
+
+		<!--
+		<view>检验人</view>
+		<button>报告生成</button>
+		<view>历史报告导出</view>
+		<uni-table ref="table" :loading="loading" border stripe type="selection" emptyText="暂无更多数据" @selection-change="selectionChange">
+		<uni-tr>
+			<uni-th width="150" align="center">报告号</uni-th>
+		</uni-tr>
+		<uni-tr v-for="(item, index) in tableDataShow" :key="index" >
+			<uni-td align="center">报告号</uni-td>
+		</uni-tr>
+		</uni-table>
+	    -->
+	
+		</view>
     </view>
 </template>
 
@@ -17,8 +52,12 @@
 	export default {
 		data() {
 			return {
+				 single:'',
+				 StartDate:null,
+				 EndDate:null,
 				 downloadProgress: [0],
-
+                 showCalendar: false, // 控制日历的显示和隐藏
+                 selectedDate: '' // 存储选择的日期
 			}
 		},
 		onLoad() {
@@ -111,7 +150,69 @@
 						    }
 						};
 					    xhr.send();
-					}
+					},
+					
+					downloadVtFile() {
+						var xhr = new XMLHttpRequest();
+						var data = {StartDate : this.StartDate,EndDate : this.EndDate}
+						var url = getApp().globalData.url + 'downloadvtfile?data=' + encodeURIComponent(JSON.stringify(data));
+						xhr.open('POST', url);
+						xhr.responseType = 'blob';
+						xhr.onload = function() {
+						    if (xhr.status === 200) {
+								//console.log(xhr)
+						        var filename = 'vts.xlsx';
+								//console.log(xhr.response)
+						        var blob = new Blob([xhr.response], { type: 'application/octet-stream' });
+						        var link = document.createElement('a');
+						        link.href = window.URL.createObjectURL(blob);
+								//console.log(link.href)
+						        link.download = filename;
+						        link.click();
+						    } else {
+								
+						            uni.showToast({
+						                    title: '下载失败',
+						                    icon: 'none',
+						                    duration: 1000,
+						                    mask: true,
+						            });
+						        }
+						
+						
+						};
+						xhr.onprogress = function(event) {
+						    if (event.lengthComputable) {
+						        var percentComplete = (event.loaded / event.total) * 100;
+								//console.log('下载进度',percentComplete.toFixed(2))
+								if(percentComplete.toFixed(2) ==100.00){
+									uni.showToast({
+									            title: '下载完成',
+									            icon: 'none',
+									            duration: 1000,
+									            mask: true,
+									          });
+								}
+						        
+						    }
+						};
+						xhr.send();
+		
+
+					},
+					
+					
+					
+					
+					
+					
+					confirmDate(date) {
+					    this.selectedDate = date;
+					    this.showCalendar = false;
+					},
+					cancelDate() {
+					    this.showCalendar = false;
+					},
 			
 		}
 	}
@@ -123,18 +224,18 @@
 		width: 100%;
 		height: 100vh;
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 		background: rgba(211, 211, 211, 0.3);
+		
 	}
 	.func-box {
-        position: relative;
-        left: 60rpx;
-        margin: 40rpx 0;
+        margin: 40rpx 40rpx;
         width: 40%;
-        height: 100vh;
+        height: 90vh;
         background-color: #FFFFFF;
         border-radius: 10px;
 	}
+	
 	.input-box{
 		display: flex;
         flex-direction: row;
@@ -162,6 +263,7 @@
 		
 	}
 	.button-box{
+		
 		display: flex;
 		flex-direction: row;
 		justify-content: flex-end;
@@ -173,5 +275,13 @@
 	    height: 10rpx;
 		background-color:rgba(211, 211, 211, 0.3); 
 	}
-
+    .imf-text-second{
+		margin: 5px 5px;
+		font-size: 15px;
+	}
+	.date-box{
+		margin-left: 10px;
+		width: 60%;
+		
+	}
 </style>

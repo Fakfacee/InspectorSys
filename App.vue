@@ -2,11 +2,11 @@
 	export default {
         globalData: {
 			//本地测试1
-			url: ['http://localhost:8080/wx/'],
+			url: ['http://127.0.0.1:8080/wx/'],
 			//本地测试2,用于配合nginx解决跨域问题.
-			//url: ['http://127.0.0.1/wx/HZ26-6/'],
+			//url: ['http://127.0.0.1/wx/'],
 			//线上发布
-			//url : ['https://cyhdl1ttleyuming.cn/wx/'],
+			//url : ['https://cyhdl1ttleyuming.cn/wx2/HZ26-6/'],
 			name:['登陆后显示个人信息'],
 			subcontractor: null,
 			useridentity  :null,

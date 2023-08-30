@@ -74,21 +74,16 @@
 						uni.setStorage({
 							key:'userimf',
 							data:result,
-							success:function(){
-								
+							success:function(){					
 							}
-						})
-						getApp().globalData.name = result.Name,
-						//承包商
-						getApp().globalData.subcontractor = result.Contractor,
-						//权限类别
-						getApp().globalData.useridentity = result.User_Identity,
-						//userid
-						getApp().globalData.userid = result.UserId,
-						//class_code 区分界面显示
-						getApp().globalData.powerid = result.PowerId,
-						getApp().globalData.welderno = result.WelderNo
-						//result.UserId
+							})
+						//刷新页面重新登录如何达成
+						//uni.setStorageSync({
+						//	key:'userimf',
+						//	data:result,
+						//	success:function(){		
+						//	}
+						//  })
 						
 						uni.navigateTo({			     
 						  url: '/pages/index/index',
