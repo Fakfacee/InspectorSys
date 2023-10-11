@@ -11,6 +11,7 @@ export function baseDataList() {
   });
 }
 
+//数据更新修改
 export function dataUpdate(formData) {
   return request({
     url: "tableDataChange",
@@ -19,6 +20,16 @@ export function dataUpdate(formData) {
   });
 }
 
+//删除
+export function dataDelete(tableData) {
+  return request({
+    url: "deletetableimf",
+    method: "post",
+    data: tableData,
+  });
+}
+
+//上传
 export function drawingUpload(data) {
   return request({
     url: "uploadtableimf",

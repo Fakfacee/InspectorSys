@@ -314,7 +314,7 @@
         <div class="el-upload__tip">仅支持jpg格式文件且大小大于2MB</div>
       </template>
     </el-upload>
-    <template #footer>
+    <!-- <template #footer>
       <span class="dialog-footer">
         <el-button
           type="primary"
@@ -324,7 +324,7 @@
           提交上传
         </el-button>
       </span>
-    </template>
+    </template> -->
   </el-dialog>
 </template>
 
@@ -339,7 +339,12 @@ import {
   UploadFilled,
   CircleCloseFilled,
 } from "@element-plus/icons-vue";
-import { baseDataList, dataUpdate, drawingUpload } from "@/Network/data.js";
+import {
+  baseDataList,
+  dataUpdate,
+  drawingUpload,
+  dataDelete,
+} from "@/Network/data.js";
 import { ElMessage, ElMessageBox, ElButton, ElDialog } from "element-plus";
 import { reactive, ref, toRaw, toRefs } from "vue";
 import { downLoad } from "@/Network/index";
@@ -417,7 +422,6 @@ const queriedList = ref(undefined);
 //分页
 function dataPaging(list) {
   if (!queriedList.value) queriedList.value = list;
-  console.log(queriedList.value, "queriedList.value");
   let res = queriedList.value ? queriedList.value : allData.value;
   tableData.value = res.slice(
     (currentPage.value - 1) * pageSize.value,
@@ -465,10 +469,19 @@ function handleDelete(row) {
     }
   )
     .then(() => {
-      ElMessage({
-        type: "success",
-        message: "删除成功",
-      });
+      dataDelete({
+        tableData: row,
+      })
+        .then((res) => {
+          console.log(res);
+          ElMessage({
+            type: "success",
+            message: "删除成功",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     })
     .catch(() => {});
 }
@@ -544,13 +557,11 @@ async function handleSave(formEl) {
         saveLoading.value = true;
         let res = await dataUpdate({
           tableData: modifiedData,
-        }).data;
-        console.log(res);
+        });
+        ElMessage.success(res.data.Note);
         saveLoading.value = false;
         dialogVisible.value = false;
-        dataListRequest().then((data) => {
-          ElMessage.success("保存成功");
-        });
+        dataListRequest();
       } catch (error) {
         console.log(error);
         ElMessage.error(error);
@@ -607,22 +618,22 @@ function changeFile(uploadFile) {
 // }
 
 //上传提交
-const uploadLoading = ref(false);
-function uploadSubmit() {
-  uploadLoading.value = true;
-  const jsonStr = JSON.stringify(uploadForm);
-  const blob = new Blob([jsonStr], {
-    type: "application/json",
-  });
-  let formData = new FormData();
-  formData.append("obj", blob);
-  formData.append("file", fileList.value[0].raw);
-  console.log(formData.get("file"));
-  drawingUpload(formData).then((res) => {
-    console.log(res);
-    uploadLoading.value = false;
-  });
-}
+// const uploadLoading = ref(false);
+// function uploadSubmit() {
+//   uploadLoading.value = true;
+//   const jsonStr = JSON.stringify(uploadForm);
+//   const blob = new Blob([jsonStr], {
+//     type: "application/json",
+//   });
+//   let formData = new FormData();
+//   formData.append("obj", blob);
+//   formData.append("file", fileList.value[0].raw);
+//   console.log(formData.get("file"));
+//   drawingUpload(formData).then((res) => {
+//     console.log(res);
+//     uploadLoading.value = false;
+//   });
+// }
 
 function action() {
   return process.env.VUE_APP_BASE_API + "/uploadtableimf";
