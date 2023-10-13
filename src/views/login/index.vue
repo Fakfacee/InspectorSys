@@ -46,6 +46,16 @@
             placeholder="请输入密码"
           />
         </el-form-item>
+        <el-form-item label="项目" prop="project">
+          <el-select
+            v-model="loginForm.project"
+            placeholder="请选择项目"
+            style="width: 100%"
+          >
+            <el-option label="惠州" value="shanghai" />
+            <el-option label="西江" value="beijing" />
+          </el-select>
+        </el-form-item>
         <el-form-item>
           <el-checkbox v-model="loginForm.pwdChecked" class="remberPwd"
             >记住密码</el-checkbox
@@ -73,13 +83,14 @@ import { ref, reactive, onMounted } from "vue";
 import { loginRequest } from "../../Network/login.js";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-import {useUserStore} from "@/stores/user"
-const userStore = useUserStore()
+import { useUserStore } from "@/stores/user";
+const userStore = useUserStore();
 const router = useRouter();
 
 const loginForm = reactive({
   username: "",
   password: "",
+  project: "",
   pwdChecked: false,
 });
 
@@ -98,15 +109,14 @@ onMounted(() => {
   }
 });
 
-
 const rules = reactive({
   username: [{ required: true, message: "请输入用户账号", trigger: "blur" }],
   password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+  project: [{ required: true, message: "请选择项目", trigger: "blur" }],
 });
 
 const loginFormRef = ref();
 async function handleLogin(formEl) {
-  console.log(loginForm);
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
@@ -120,7 +130,7 @@ async function handleLogin(formEl) {
                 localStorage.setItem("loginForm", JSON.stringify({}));
               }
 
-              userStore.userForm = res.data
+              userStore.userForm = res.data;
               console.log(userStore.userForm);
               ElMessage.success("登录成功！");
               router.push({
@@ -188,6 +198,9 @@ async function handleLogin(formEl) {
         margin-top: 20px;
       }
       .el-input {
+        height: 40px;
+      }
+      ::v-deep .el-select .el-input__inner {
         height: 40px;
       }
     }

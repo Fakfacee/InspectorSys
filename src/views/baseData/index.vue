@@ -218,6 +218,8 @@
           <el-form-item label="材质" prop="MaterialId">
             <el-select v-model="formData.MaterialId" placeholder="请选择材质">
               <el-option label="CS" value="CS" />
+              <el-option label="SS" value="SS" />
+              <el-option label="CU/NI" value="CU/NI" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -300,31 +302,27 @@
     title="图纸上传"
   >
     <el-upload
-      :action="action()"
-      v-model:file-list="fileList"
-      :on-change="changeFile"
+      ref="uploadRef"
+      class="upload-demo"
       :before-upload="beforeUpload"
+      :on-success="onSuccess"
+      :on-change="onChange"
+      :on-exceed="onExceed"
       list-type="picture"
-      :data="uploadForm"
+      :auto-upload="false"
+      limit="1"
+      :file-list="fileList"
     >
       <template #trigger>
         <el-button type="primary">选取文件</el-button>
       </template>
       <template #tip>
-        <div class="el-upload__tip">仅支持jpg格式文件且大小大于2MB</div>
+        <div class="el-upload__tip">仅能上传xlsx文件</div>
       </template>
     </el-upload>
-    <!-- <template #footer>
-      <span class="dialog-footer">
-        <el-button
-          type="primary"
-          @click="uploadSubmit"
-          :loading="uploadLoading"
-        >
-          提交上传
-        </el-button>
-      </span>
-    </template> -->
+    <template #footer>
+      <el-button type="success" @click="submitUpload">确认上传</el-button>
+    </template>
   </el-dialog>
 </template>
 
@@ -366,26 +364,6 @@ const state = reactive({
   formRules: {
     DrawingNo: [{ required: true, message: "请输入图纸号", trigger: "blur" }],
     WeldNo: [{ required: true, message: "请输入焊口号", trigger: "blur" }],
-    // PipeNo: [{ required: true, message: "请输入图纸号", trigger: "blur" }],
-    // Size: "",
-    // MaterialId: "",
-    ZuDuiDate: [
-      {
-        type: "date",
-        required: true,
-        message: "请选择组对日期",
-        trigger: "change",
-      },
-    ],
-    // ZuDuiInspectDate: [],
-    WeldingDate: [
-      {
-        type: "date",
-        required: true,
-        message: "请选择焊接日期",
-        trigger: "change",
-      },
-    ],
   },
   uploadForm: {
     user: "test",
@@ -591,52 +569,42 @@ function openUploadDialog() {
 }
 
 //上传限制
+const file = ref();
 const fileList = ref([]);
-const beforeUpload = (rawFile) => {
-  if (rawFile.type !== "image/jpeg") {
-    ElMessage.error("文件仅支持JPG格式！");
-    return false;
-  } else if (rawFile.size / 1024 / 1024 > 2) {
-    ElMessage.error("文件最大不能超过 2MB!");
-    return false;
+function onChange(fileRaw) {
+  file.value = fileRaw
+  let name = fileRaw.name.split('.');
+  if(name[1] === "xls" || name[1] === "xlsx" || name[1] === "csv") {
+    return fileRaw
+  }else {
+    ElMessage.error('仅能上传excel格式文件！')
+    fileList.value = []
+    file.value = ''
+    return false
   }
-  return true;
-};
-
-function changeFile(uploadFile) {
-  console.log(uploadFile);
-  fileList.value.push(uploadFile);
 }
 
-// function httpRequest(opt) {
-//   const { file, onSuccess, onFail } = opt;
-//   const formData = new FormData();
-//   formData.append("file", file);
-//   formData.append("user", "test");
-//   console.log(formData.get("file"));
-//   // drawingUpload(formData).then((res) => console.log(res, "res"));
-// }
+function onSuccess() {
+  console.log("shangchuanchengg");
+}
 
-//上传提交
-// const uploadLoading = ref(false);
-// function uploadSubmit() {
-//   uploadLoading.value = true;
-//   const jsonStr = JSON.stringify(uploadForm);
-//   const blob = new Blob([jsonStr], {
-//     type: "application/json",
-//   });
-//   let formData = new FormData();
-//   formData.append("obj", blob);
-//   formData.append("file", fileList.value[0].raw);
-//   console.log(formData.get("file"));
-//   drawingUpload(formData).then((res) => {
-//     console.log(res);
-//     uploadLoading.value = false;
-//   });
-// }
+function onExceed() {
+  ElMessage.error("单次仅能上传一个文件！")
+}
 
-function action() {
-  return process.env.VUE_APP_BASE_API + "/uploadtableimf";
+const uploadRef = ref();
+function submitUpload() {
+  if(!file.value){
+    ElMessage.error("上传文件不能为空！")
+    return 
+  }
+  console.log(file.value);
+  let formData = new FormData()
+  formData.append("file",file.value.raw)
+  drawingUpload(formData)
+    .then((response) => {
+      console.log(response);
+    })
 }
 </script>
 

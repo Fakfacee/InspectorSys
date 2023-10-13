@@ -6,7 +6,8 @@ import { ElNotification , ElMessageBox, ElMessage, ElLoading } from 'element-plu
 
 const instance = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 10000,
+  // baseURL:'https://cyhdl1ttleyuming.cn/wx2/HZ26-6/',
+  timeout: 50000,
   headers: {
     "Content-Type": "application/json",
   },
