@@ -2,7 +2,12 @@ import axios from "axios";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 
-import { ElNotification , ElMessageBox, ElMessage, ElLoading } from 'element-plus'
+import {
+  ElNotification,
+  ElMessageBox,
+  ElMessage,
+  ElLoading,
+} from "element-plus";
 
 const instance = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
@@ -35,27 +40,33 @@ instance.interceptors.response.use(
     console.error("响应发生错误", error);
     return Promise.reject(error);
   }
-)
+);
 
 let downloadLoadingInstance;
 export function downLoad(url, fileName, dateValue) {
-    downloadLoadingInstance = ElLoading.service({ text: "正在下载数据，请稍候", background: "rgba(0, 0, 0, 0.7)", })
-    return instance.get(url, {
-        responseType: 'blob'
-    }).then((data) => {
-        console.log(data);
-        const blob = new Blob([data.data], { type: 'application/octet-stream' })
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.download = fileName;
-        link.click()
-        downloadLoadingInstance.close();
-        ElMessage.success('下载成功')
-    }).catch((r) => {
-        console.error(r)
-        ElMessage.error('下载文件出现错误！')
-        downloadLoadingInstance.close();
-      })
+  downloadLoadingInstance = ElLoading.service({
+    text: "正在下载数据，请稍候",
+    background: "rgba(0, 0, 0, 0.7)",
+  });
+  return instance
+    .get(url + "?data=" + encodeURIComponent(dateValue), {
+      responseType: "blob",
+    })
+    .then((data) => {
+      console.log(data);
+      const blob = new Blob([data.data], { type: "application/octet-stream" });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = fileName;
+      link.click();
+      downloadLoadingInstance.close();
+      ElMessage.success("下载成功");
+    })
+    .catch((r) => {
+      console.error(r);
+      ElMessage.error("下载文件出现错误！");
+      downloadLoadingInstance.close();
+    });
 }
 
 export default instance;

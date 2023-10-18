@@ -329,11 +329,13 @@
               end-placeholder="结束时间"
               :shortcuts="shortcuts"
               value-format="YYYY-MM-DD"
-              @change="change"
+              :disabled-date="disabledDate"
             />
           </el-form-item>
         </el-form>
       </el-col>
+      <el-col :span="24">
+        <el-alert title="时间范围为空时，下载全部数据！" type="warning" show-icon :closable="false" /></el-col>
       <el-col :span="24">
         <el-table :data="downLoadTableData">
           <el-table-column
@@ -348,7 +350,7 @@
                 link
                 :icon="Download"
                 type="primary"
-                @click="handleExport(scope.row.key)"
+                @click="handleExport(scope.row)"
                 >下载
               </el-button>
             </template>
@@ -418,12 +420,12 @@ const state = reactive({
     },
     {
       name: "VT信息",
-      key: "downloadsumfile",
+      key: "downloadvtfile",
     },
   ],
 });
 
-const { tableData, formData, uploadForm,downLoadTableData } = toRefs(state);
+const { tableData, formData, uploadForm, downLoadTableData } = toRefs(state);
 
 const allData = ref([]);
 const currentPage = ref(1);
@@ -609,16 +611,43 @@ function openDownloadDialog() {
   downLoadDialog.value = true;
 }
 //下载
-function handleExport(url) {
-  downLoad(
-    url,
-    `summary_${new Date().toLocaleDateString("zh-CN", {
-      year: "2-digit",
-      month: "2-digit",
-      day: "2-digit",
-    })}.xlsx`,
-    dateValue.value
-  );
+function handleExport(row) {
+  if (!dateValue.value) {
+    downLoad(
+      row.key,
+      `summary_${new Date().toLocaleDateString("zh-CN", {
+        year: "2-digit",
+        month: "2-digit",
+        day: "2-digit",
+      })}.xlsx`
+    );
+  } else {
+    ElMessageBox.confirm(
+      `是否下载截至时间为${dateValue.value[0]}至${dateValue.value[1]}的${row.name}数据?`,
+      "提示",
+      {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }
+    )
+      .then(() => {
+        let date = {
+          StartDate: dateValue.value[0],
+          EndDate: dateValue.value[1],
+        };
+        downLoad(
+          row.key,
+          `summary_${new Date().toLocaleDateString("zh-CN", {
+            year: "2-digit",
+            month: "2-digit",
+            day: "2-digit",
+          })}.xlsx`,
+          JSON.stringify(date)
+        );
+      })
+      .catch(() => {});
+  }
 }
 
 //上传窗口
@@ -691,38 +720,38 @@ function submitUpload() {
 }
 
 //时间范围
-const dateValue = ref()
+const dateValue = ref();
 const shortcuts = [
   {
-    text: '上周',
+    text: "上周",
     value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-      return [start, end]
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      return [start, end];
     },
   },
   {
-    text: '上个月',
+    text: "上个月",
     value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-      return [start, end]
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+      return [start, end];
     },
   },
   {
-    text: '3个月之前',
+    text: "3个月之前",
     value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-      return [start, end]
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+      return [start, end];
     },
   },
-]
-function change() {
-  console.log(dateValue.value,111)
+];
+function disabledDate(date) {
+  return date.getTime() > Date.now()
 }
 </script>
 
