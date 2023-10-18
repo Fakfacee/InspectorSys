@@ -44,16 +44,9 @@
       <el-button
         :icon="Download"
         plain
-        type="warning"
-        @click="handleExport('downloaddwrfile')"
-        >DWR下载</el-button
-      >
-      <el-button
-        :icon="Download"
-        plain
-        type="warning"
-        @click="handleExport('downloadsumfile')"
-        >焊口信息汇总表下载</el-button
+        type="success"
+        @click="openDownloadDialog"
+        >数据下载</el-button
       >
       <el-button
         :icon="UploadFilled"
@@ -186,12 +179,7 @@
   </el-row>
 
   <!-- 表单弹窗 -->
-  <el-dialog
-    v-model="dialogVisible"
-    :title="formTitle"
-    width="30%"
-    :before-close="handleClose"
-  >
+  <el-dialog v-model="dialogVisible" :title="formTitle" width="30%">
     <el-form
       ref="ruleFormRef"
       :model="formData"
@@ -298,14 +286,11 @@
   <el-dialog
     class="uploadDialog"
     v-model="UploaddialogVisible"
-    :before-close="handleClose"
     title="图纸上传"
   >
     <el-upload
       ref="uploadRef"
       class="upload-demo"
-      :before-upload="beforeUpload"
-      :on-success="onSuccess"
       :on-change="onChange"
       :on-exceed="onExceed"
       list-type="picture"
@@ -321,8 +306,56 @@
       </template>
     </el-upload>
     <template #footer>
-      <el-button type="success" @click="submitUpload">确认上传</el-button>
+      <el-button
+        type="success"
+        @click="submitUpload"
+        :loading="uploadLoading"
+        >{{ uploadLoading ? "上传中..." : "上传服务器" }}</el-button
+      >
     </template>
+  </el-dialog>
+
+  <el-dialog v-model="downLoadDialog" title="数据下载" width="600">
+    <el-row :justify="center">
+      <el-col :span="24">
+        <el-form :inline="true">
+          <el-form-item label="时间范围">
+            <el-date-picker
+              v-model="dateValue"
+              type="daterange"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              :shortcuts="shortcuts"
+              value-format="YYYY-MM-DD"
+              @change="change"
+            />
+          </el-form-item>
+        </el-form>
+      </el-col>
+      <el-col :span="24">
+        <el-table :data="downLoadTableData">
+          <el-table-column
+            label="数据名称"
+            prop="name"
+            show-overflow-tooltip
+            align="center"
+          />
+          <el-table-column label="操作" align="center">
+            <template #default="scope">
+              <el-button
+                link
+                :icon="Download"
+                type="primary"
+                @click="handleExport(scope.row.key)"
+                >下载
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-col>
+    </el-row>
   </el-dialog>
 </template>
 
@@ -343,7 +376,13 @@ import {
   drawingUpload,
   dataDelete,
 } from "@/Network/data.js";
-import { ElMessage, ElMessageBox, ElButton, ElDialog } from "element-plus";
+import {
+  ElMessage,
+  ElMessageBox,
+  ElButton,
+  ElDialog,
+  ElNotification,
+} from "element-plus";
 import { reactive, ref, toRaw, toRefs } from "vue";
 import { downLoad } from "@/Network/index";
 
@@ -368,9 +407,23 @@ const state = reactive({
   uploadForm: {
     user: "test",
   },
+  downLoadTableData: [
+    {
+      name: "DWR",
+      key: "downloaddwrfile",
+    },
+    {
+      name: "焊口信息汇总表",
+      key: "downloadsumfile",
+    },
+    {
+      name: "VT信息",
+      key: "downloadsumfile",
+    },
+  ],
 });
 
-const { tableData, formData, uploadForm } = toRefs(state);
+const { tableData, formData, uploadForm,downLoadTableData } = toRefs(state);
 
 const allData = ref([]);
 const currentPage = ref(1);
@@ -550,7 +603,12 @@ async function handleSave(formEl) {
   });
 }
 
-//导出
+//下载窗口
+const downLoadDialog = ref(false);
+function openDownloadDialog() {
+  downLoadDialog.value = true;
+}
+//下载
 function handleExport(url) {
   downLoad(
     url,
@@ -558,53 +616,113 @@ function handleExport(url) {
       year: "2-digit",
       month: "2-digit",
       day: "2-digit",
-    })}.xlsx`
+    })}.xlsx`,
+    dateValue.value
   );
 }
 
-//上传
+//上传窗口
 const UploaddialogVisible = ref(false);
 function openUploadDialog() {
   UploaddialogVisible.value = true;
 }
 
-//上传限制
+//上传格式限制
 const file = ref();
 const fileList = ref([]);
 function onChange(fileRaw) {
-  file.value = fileRaw
-  let name = fileRaw.name.split('.');
-  if(name[1] === "xls" || name[1] === "xlsx" || name[1] === "csv") {
-    return fileRaw
-  }else {
-    ElMessage.error('仅能上传excel格式文件！')
-    fileList.value = []
-    file.value = ''
-    return false
+  file.value = fileRaw;
+  let name = fileRaw.name.split(".");
+  if (name[1] === "xls" || name[1] === "xlsx" || name[1] === "csv") {
+    return fileRaw;
+  } else {
+    ElNotification({
+      title: "上传失败",
+      message: `仅能上传excel格式文件！`,
+      type: "error",
+    });
+    fileList.value = [];
+    file.value = "";
+    return false;
   }
 }
 
-function onSuccess() {
-  console.log("shangchuanchengg");
-}
-
+//上传次数限制钩子
 function onExceed() {
-  ElMessage.error("单次仅能上传一个文件！")
+  ElNotification({
+    title: "上传失败",
+    message: `单次仅能上传一个文件！`,
+    type: "error",
+  });
 }
 
+//上传按钮
+const uploadLoading = ref(false);
 const uploadRef = ref();
 function submitUpload() {
-  if(!file.value){
-    ElMessage.error("上传文件不能为空！")
-    return 
+  if (!file.value) {
+    ElMessage.error("上传文件不能为空！");
+    return;
   }
+  uploadLoading.value = true;
   console.log(file.value);
-  let formData = new FormData()
-  formData.append("file",file.value.raw)
+  let formData = new FormData();
+  formData.append("file", file.value.raw);
+  formData.append("user", "test");
   drawingUpload(formData)
-    .then((response) => {
-      console.log(response);
+    .then((res) => {
+      console.log(res);
+      ElNotification({
+        title: "上传成功",
+        message: `${res.data.Note}`,
+        type: "success",
+      });
+      uploadLoading.value = false;
+      fileList.value = [];
+      file.value = "";
     })
+    .catch((error) => {
+      ElNotification({
+        title: "上传失败",
+        message: `${error.data.Note}`,
+        type: "error",
+      });
+    });
+}
+
+//时间范围
+const dateValue = ref()
+const shortcuts = [
+  {
+    text: '上周',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      return [start, end]
+    },
+  },
+  {
+    text: '上个月',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+      return [start, end]
+    },
+  },
+  {
+    text: '3个月之前',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+      return [start, end]
+    },
+  },
+]
+function change() {
+  console.log(dateValue.value,111)
 }
 </script>
 

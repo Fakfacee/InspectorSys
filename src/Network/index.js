@@ -38,7 +38,7 @@ instance.interceptors.response.use(
 )
 
 let downloadLoadingInstance;
-export function downLoad(url, fileName) {
+export function downLoad(url, fileName, dateValue) {
     downloadLoadingInstance = ElLoading.service({ text: "正在下载数据，请稍候", background: "rgba(0, 0, 0, 0.7)", })
     return instance.get(url, {
         responseType: 'blob'

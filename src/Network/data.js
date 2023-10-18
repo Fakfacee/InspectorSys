@@ -34,6 +34,9 @@ export function drawingUpload(data) {
   return request({
     url: "uploadtableimf",
     method: "post",
-    data:data
+    data:data,
+    headers: {
+      'Content-Type':'mutipart/form-data'
+    }
   })
 }
