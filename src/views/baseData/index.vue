@@ -38,9 +38,27 @@
             >删除</el-button
           ></el-form-item
         >
+        <el-form-item>
+          <el-button
+            :icon="Download"
+            plain
+            type="success"
+            @click="openDownloadDialog"
+            >数据下载</el-button
+          >
+        </el-form-item>
+        <el-form-item>
+          <el-button
+            :icon="UploadFilled"
+            plain
+            type="primary"
+            @click="openUploadDialog"
+            >图纸上传/升版</el-button
+          >
+        </el-form-item>
       </el-form>
     </el-col>
-    <el-col>
+    <!-- <el-col>
       <el-button
         :icon="Download"
         plain
@@ -55,7 +73,7 @@
         @click="openUploadDialog"
         >图纸上传</el-button
       >
-    </el-col>
+    </el-col> -->
 
     <el-col :span="24">
       <div class="table-block">
@@ -306,15 +324,17 @@
       </template>
     </el-upload>
     <template #footer>
+      <el-button @click="submitUpload('drawingchange')" :disabled="uploadLoading">升版</el-button>
       <el-button
         type="success"
-        @click="submitUpload"
+        @click="submitUpload('uploadtableimf')"
         :loading="uploadLoading"
-        >{{ uploadLoading ? "上传中..." : "上传服务器" }}</el-button
+        >{{ uploadLoading ? "上传中..." : "上传" }}</el-button
       >
     </template>
   </el-dialog>
 
+  <!-- 下载弹窗 -->
   <el-dialog v-model="downLoadDialog" title="数据下载" width="600">
     <el-row :justify="center">
       <el-col :span="24">
@@ -335,7 +355,12 @@
         </el-form>
       </el-col>
       <el-col :span="24">
-        <el-alert title="时间范围为空时，下载全部数据！" type="warning" show-icon :closable="false" /></el-col>
+        <el-alert
+          title="时间范围为空时，下载全部数据！"
+          type="warning"
+          show-icon
+          :closable="false"
+      /></el-col>
       <el-col :span="24">
         <el-table :data="downLoadTableData">
           <el-table-column
@@ -370,7 +395,6 @@ import {
   RefreshLeft,
   Download,
   UploadFilled,
-  CircleCloseFilled,
 } from "@element-plus/icons-vue";
 import {
   baseDataList,
@@ -385,7 +409,7 @@ import {
   ElDialog,
   ElNotification,
 } from "element-plus";
-import { reactive, ref, toRaw, toRefs } from "vue";
+import { reactive, ref, toRaw, toRefs, h } from "vue";
 import { downLoad } from "@/Network/index";
 
 const state = reactive({
@@ -685,22 +709,20 @@ function onExceed() {
   });
 }
 
-//上传按钮
+//上传新文件按钮/升版
 const uploadLoading = ref(false);
 const uploadRef = ref();
-function submitUpload() {
+function submitUpload(key) {
   if (!file.value) {
     ElMessage.error("上传文件不能为空！");
     return;
   }
   uploadLoading.value = true;
-  console.log(file.value);
   let formData = new FormData();
   formData.append("file", file.value.raw);
   formData.append("user", "test");
-  drawingUpload(formData)
+  drawingUpload(formData, key)
     .then((res) => {
-      console.log(res);
       ElNotification({
         title: "上传成功",
         message: `${res.data.Note}`,
@@ -713,7 +735,7 @@ function submitUpload() {
     .catch((error) => {
       ElNotification({
         title: "上传失败",
-        message: `${error.data.Note}`,
+        message: `错误，请联系管理员`,
         type: "error",
       });
     });
@@ -751,7 +773,7 @@ const shortcuts = [
   },
 ];
 function disabledDate(date) {
-  return date.getTime() > Date.now()
+  return date.getTime() > Date.now();
 }
 </script>
 

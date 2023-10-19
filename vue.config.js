@@ -18,6 +18,7 @@ module.exports = defineConfig({
         },
       },
       "/dev-api": {
+        // target: "http://localhost:8080",
         target: "https://cyhdl1ttleyuming.cn/wx2/HZ26-6/", //代理地址
         changeOrigin: true,
         pathRewrite: {

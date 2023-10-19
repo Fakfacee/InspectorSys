@@ -30,9 +30,9 @@ export function dataDelete(tableData) {
 }
 
 //上传
-export function drawingUpload(data) {
+export function drawingUpload(data,url) {
   return request({
-    url: "uploadtableimf",
+    url: url,
     method: "post",
     data:data,
     headers: {
