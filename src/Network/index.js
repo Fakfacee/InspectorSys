@@ -11,7 +11,6 @@ import {
 
 const instance = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
-  // baseURL:'https://cyhdl1ttleyuming.cn/wx2/HZ26-6/',
   timeout: 50000,
   headers: {
     "Content-Type": "application/json",
@@ -42,6 +41,7 @@ instance.interceptors.response.use(
   }
 );
 
+//通用下载
 let downloadLoadingInstance;
 export function downLoad(url, fileName, dateValue) {
   downloadLoadingInstance = ElLoading.service({

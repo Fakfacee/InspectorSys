@@ -13,11 +13,11 @@
         <el-form-item>
           <el-button :icon="RefreshLeft" @click="handleReset">重置</el-button>
         </el-form-item>
-        <el-form-item>
+        <!-- <el-form-item>
           <el-button :icon="Plus" plain type="primary" @click="handleAddForm"
             >新增</el-button
           ></el-form-item
-        >
+        > -->
         <el-form-item
           ><el-button
             :icon="Edit"
@@ -240,6 +240,7 @@
             <el-date-picker
               v-model="formData.ZuDuiDate"
               type="date"
+              value-format="YYYY-MM-DD"
               placeholder="请选择组对日期"
               style="width: 100%"
             />
@@ -250,6 +251,7 @@
             <el-date-picker
               v-model="formData.ZuDuiInspectDate"
               type="date"
+              value-format="YYYY-MM-DD"
               placeholder="请选择组对检验日期"
               style="width: 100%"
             />
@@ -260,6 +262,7 @@
             <el-date-picker
               v-model="formData.WeldingDate"
               type="date"
+              value-format="YYYY-MM-DD"
               placeholder="请选择焊接日期"
               style="width: 100%"
             />
@@ -271,6 +274,7 @@
               v-model="formData.AppearanceInspectDate"
               type="date"
               placeholder="请选择外观检验日期"
+              value-format="YYYY-MM-DD"
               style="width: 100%"
             />
           </el-form-item>
@@ -425,6 +429,19 @@ const state = reactive({
     WeldingDate: [],
     AppearanceInspectDate: [],
     AppearanceResult: "",
+    Contractor:'',
+    Fitter:'',
+    Inspector:'',
+    JointType:'',
+    Location:'',
+    ModuleNo:'',
+    Thickness:'',
+    WPS:'',
+    WeldId:'',
+    WelderNo:'',
+    WorkPackage:'',
+    ZuDuiId:'',
+    ZuDuiResult:''
   },
   formRules: {
     DrawingNo: [{ required: true, message: "请输入图纸号", trigger: "blur" }],
@@ -462,6 +479,7 @@ async function dataListRequest() {
   await baseDataList()
     .then((res) => {
       if (res.status === 200) {
+        // console.log(res.data,'dataListRequest');
         allData.value = res.data;
         dataPaging();
         return Promise.resolve();
@@ -576,22 +594,22 @@ function handleSelectionAll(selection) {
 }
 
 //新增表单
-function handleAddForm() {
-  formTitle.value = "新增表单";
-  dialogVisible.value = true;
-  formData.value = {
-    DrawingNo: "",
-    WeldNo: "",
-    PipeNo: "",
-    Size: "",
-    MaterialId: "",
-    ZuDuiDate: [],
-    ZuDuiInspectDate: [],
-    WeldingDate: [],
-    AppearanceInspectDate: [],
-    AppearanceResult: "",
-  };
-}
+// function handleAddForm() {
+//   formTitle.value = "新增表单";
+//   dialogVisible.value = true;
+//   formData.value = {
+//     DrawingNo: "",
+//     WeldNo: "",
+//     PipeNo: "",
+//     Size: "",
+//     MaterialId: "",
+//     ZuDuiDate: [],
+//     ZuDuiInspectDate: [],
+//     WeldingDate: [],
+//     AppearanceInspectDate: [],
+//     AppearanceResult: "",
+//   };
+// }
 
 //修改保存
 const ruleFormRef = ref();
@@ -601,15 +619,18 @@ async function handleSave(formEl) {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       const modifiedData = toRaw(formData.value);
-      modifiedData.editable = true;
-      for (const key in modifiedData) {
-        if (modifiedData[key] !== rowData.value[key]) {
-          modifiedData[key + "_edible"] = true;
-        } else {
-          modifiedData[key + "_edible"] = false;
-        }
-      }
-      modifiedData.type = "edit";
+      console.log(formData.value);
+      
+      // modifiedData.editable = true;
+      // for (const key in modifiedData) {
+      //   if (modifiedData[key] !== rowData.value[key]) {
+      //     modifiedData[key + "_edible"] = true;
+      //   } else {
+      //     modifiedData[key + "_edible"] = false;
+      //   }
+      // }
+      // modifiedData.type = "edit";
+
       try {
         saveLoading.value = true;
         let res = await dataUpdate({
