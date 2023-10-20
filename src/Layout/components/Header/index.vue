@@ -40,7 +40,7 @@
                 <el-dropdown-item @click="() => routerPush('/personalCenter')"
                   >个人中心</el-dropdown-item
                 >
-                <el-dropdown-item @click="() => routerPush('/')"
+                <el-dropdown-item @click="loginOut"
                   >退出登录</el-dropdown-item
                 >
               </el-dropdown-menu>
@@ -69,6 +69,11 @@ function routerPush(path) {
 
 function reload() {
   location.reload();
+}
+
+function loginOut(){
+  sessionStorage.clear('roles');
+  routerPush('/')
 }
 </script>
 
