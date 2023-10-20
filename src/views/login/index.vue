@@ -132,6 +132,7 @@ async function handleLogin(formEl) {
 
               userStore.userForm = res.data;
               console.log(userStore.userForm);
+              sessionStorage.setItem("roles", res.data.PowerId);
               ElMessage.success("登录成功！");
               router.push({
                 path: "/layout",

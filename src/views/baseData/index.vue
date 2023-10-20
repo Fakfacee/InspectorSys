@@ -18,7 +18,7 @@
             >新增</el-button
           ></el-form-item
         > -->
-        <el-form-item
+        <el-form-item v-if="roles == 1"
           ><el-button
             :icon="Edit"
             plain
@@ -28,7 +28,7 @@
             >修改</el-button
           ></el-form-item
         >
-        <el-form-item
+        <el-form-item v-if="roles == 1"
           ><el-button
             :icon="Delete"
             plain
@@ -47,7 +47,7 @@
             >数据下载</el-button
           >
         </el-form-item>
-        <el-form-item>
+        <el-form-item v-if="roles == 1">
           <el-button
             :icon="UploadFilled"
             plain
@@ -158,7 +158,7 @@
             align="center"
             width="120"
           />
-          <el-table-column label="操作" align="center">
+          <el-table-column label="操作" align="center" v-if="roles == 1">
             <template #default="scope">
               <el-button
                 icon="Edit"
@@ -328,7 +328,11 @@
       </template>
     </el-upload>
     <template #footer>
-      <el-button @click="submitUpload('drawingchange')" :disabled="uploadLoading">升版</el-button>
+      <el-button
+        @click="submitUpload('drawingchange')"
+        :disabled="uploadLoading"
+        >升版</el-button
+      >
       <el-button
         type="success"
         @click="submitUpload('uploadtableimf')"
@@ -416,6 +420,8 @@ import {
 import { reactive, ref, toRaw, toRefs, h } from "vue";
 import { downLoad } from "@/Network/index";
 
+const roles = sessionStorage.getItem("roles");
+console.log(roles);
 const state = reactive({
   tableData: [],
   formData: {
@@ -429,19 +435,19 @@ const state = reactive({
     WeldingDate: [],
     AppearanceInspectDate: [],
     AppearanceResult: "",
-    Contractor:'',
-    Fitter:'',
-    Inspector:'',
-    JointType:'',
-    Location:'',
-    ModuleNo:'',
-    Thickness:'',
-    WPS:'',
-    WeldId:'',
-    WelderNo:'',
-    WorkPackage:'',
-    ZuDuiId:'',
-    ZuDuiResult:''
+    Contractor: "",
+    Fitter: "",
+    Inspector: "",
+    JointType: "",
+    Location: "",
+    ModuleNo: "",
+    Thickness: "",
+    WPS: "",
+    WeldId: "",
+    WelderNo: "",
+    WorkPackage: "",
+    ZuDuiId: "",
+    ZuDuiResult: "",
   },
   formRules: {
     DrawingNo: [{ required: true, message: "请输入图纸号", trigger: "blur" }],
@@ -620,7 +626,7 @@ async function handleSave(formEl) {
     if (valid) {
       const modifiedData = toRaw(formData.value);
       console.log(formData.value);
-      
+
       // modifiedData.editable = true;
       // for (const key in modifiedData) {
       //   if (modifiedData[key] !== rowData.value[key]) {
