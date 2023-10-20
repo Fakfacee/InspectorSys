@@ -52,8 +52,8 @@
             placeholder="请选择项目"
             style="width: 100%"
           >
-            <el-option label="惠州" value="shanghai" />
-            <el-option label="西江" value="beijing" />
+            <el-option label="惠州" value="/HZ26-6" />
+            <el-option label="西江" value="/XJ30-2" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -84,6 +84,7 @@ import { loginRequest } from "../../Network/login.js";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/stores/user";
+import instance from "@/Network/index";
 const userStore = useUserStore();
 const router = useRouter();
 
@@ -120,6 +121,8 @@ async function handleLogin(formEl) {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
+      instance.defaults.baseURL = process.env.VUE_APP_BASE_API + loginForm.project
+      console.log(instance.defaults.baseURL);
       loginRequest(loginForm)
         .then((res) => {
           if (res.status === 200) {
