@@ -67,9 +67,9 @@
           >
         </el-form-item>
       </el-form>
-      <div class="navbar">
+      <!-- <div class="navbar">
         <p>没有账号？<el-link>去注册</el-link></p>
-      </div>
+      </div> -->
       <div class="footer">
         <p>粤公网安备 44049302000140号</p>
       </div>
