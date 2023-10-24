@@ -364,7 +364,7 @@
       </el-col>
       <el-col :span="24">
         <el-alert
-          title="时间范围为空时，下载全部数据！"
+          title="下载VT信息时，时间为必选值"
           type="warning"
           show-icon
           :closable="false"
@@ -664,6 +664,10 @@ function openDownloadDialog() {
 //下载
 function handleExport(row) {
   if (!dateValue.value) {
+    if(row.key == 'downloadvtfile'){
+      ElMessage.error('请选择时间范围')
+      return
+    }
     downLoad(
       row.key,
       `summary_${new Date().toLocaleDateString("zh-CN", {
@@ -695,9 +699,10 @@ function handleExport(row) {
             day: "2-digit",
           })}.xlsx`,
           JSON.stringify(date)
-        );
+        )
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   }
 }
 

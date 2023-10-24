@@ -48,8 +48,10 @@ export function downLoad(url, fileName, dateValue) {
     text: "正在下载数据，请稍候",
     background: "rgba(0, 0, 0, 0.7)",
   });
+  let data = ""
+  if(dateValue) data = "?data=" + encodeURIComponent(dateValue)
   return instance
-    .get(url + "?data=" + encodeURIComponent(dateValue), {
+    .get(url + data, {
       responseType: "blob",
     })
     .then((data) => {

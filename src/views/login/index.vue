@@ -70,9 +70,9 @@
       <!-- <div class="navbar">
         <p>没有账号？<el-link>去注册</el-link></p>
       </div> -->
-      <div class="footer">
+      <!-- <div class="footer">
         <p>粤公网安备 44049302000140号</p>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
