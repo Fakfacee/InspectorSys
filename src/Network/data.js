@@ -37,6 +37,7 @@ export function drawingUpload(data,url) {
     data:data,
     headers: {
       'Content-Type':'mutipart/form-data'
-    }
+    },
+    timeout: 120000
   })
 }
