@@ -54,6 +54,8 @@
           >
             <el-option label="惠州" value="/HZ26-6" />
             <el-option label="西江" value="/XJ30-2" />
+            <el-option label="番禺" value="/PY" />
+            
           </el-select>
         </el-form-item>
         <el-form-item>

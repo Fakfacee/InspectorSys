@@ -17,6 +17,7 @@ module.exports = defineConfig({
       //     ["^" + process.env.VUE_APP_BASE_API]: "",
       //   },
       // },
+      //惠州
       "/dev-api/HZ26-6": {
         target: "https://cyhdl1ttleyuming.cn/wx2/HZ26-6/", //代理地址
         changeOrigin: true,
@@ -24,11 +25,20 @@ module.exports = defineConfig({
           "^/dev-api/HZ26-6": "",
         },
       },
+      //西江
       "/dev-api/XJ30-2": {
         target: "https://cyhdl1ttleyuming.cn/wx2/XJ30-2/", //代理地址
         changeOrigin: true,
         pathRewrite: {
           "^/dev-api/XJ30-2": "",
+        },
+      },
+      //番禺
+      "/dev-api/PY": {
+        target: "https://cyhdl1ttleyuming.cn/wx2/PY/", //代理地址
+        changeOrigin: true,
+        pathRewrite: {
+          "^/dev-api/PY": "",
         },
       },
     },

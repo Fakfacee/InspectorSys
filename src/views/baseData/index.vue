@@ -364,7 +364,7 @@
       </el-col>
       <el-col :span="24">
         <el-alert
-          title="下载VT信息时，时间为必选值"
+          title="下载VT信息时，时间为必选值、默认下载为总表"
           type="warning"
           show-icon
           :closable="false"
@@ -419,9 +419,10 @@ import {
 } from "element-plus";
 import { reactive, ref, toRaw, toRefs, h } from "vue";
 import { downLoad } from "@/Network/index";
+import {formatDate} from "@/utils/formattedDate.js"
 
 const roles = sessionStorage.getItem("roles");
-console.log(roles);
+
 const state = reactive({
   tableData: [],
   formData: {
@@ -462,7 +463,7 @@ const state = reactive({
       key: "downloaddwrfile",
     },
     {
-      name: "焊口信息汇总表",
+      name: "焊口信息表",
       key: "downloadsumfile",
     },
     {
@@ -485,7 +486,6 @@ async function dataListRequest() {
   await baseDataList()
     .then((res) => {
       if (res.status === 200) {
-        // console.log(res.data,'dataListRequest');
         allData.value = res.data;
         dataPaging();
         return Promise.resolve();
@@ -655,7 +655,10 @@ async function handleSave(formEl) {
     }
   });
 }
-
+const defaultDateValue = {
+  StartDate: formatDate(new Date(2000,1,1)),
+  EndDate: formatDate(new Date(Date.now()))
+}
 //下载窗口
 const downLoadDialog = ref(false);
 function openDownloadDialog() {
@@ -664,17 +667,19 @@ function openDownloadDialog() {
 //下载
 function handleExport(row) {
   if (!dateValue.value) {
-    if(row.key == 'downloadvtfile'){
-      ElMessage.error('请选择时间范围')
-      return
+    if (row.key == "downloadvtfile") {
+      ElMessage.error("请选择时间范围");
+      return;
     }
+    console.log(defaultDateValue,'默认时间');
     downLoad(
       row.key,
-      `summary_${new Date().toLocaleDateString("zh-CN", {
+      `${row.name}_${new Date().toLocaleDateString("zh-CN", {
         year: "2-digit",
         month: "2-digit",
         day: "2-digit",
-      })}.xlsx`
+      })}.xlsx`,
+      JSON.stringify(defaultDateValue)
     );
   } else {
     ElMessageBox.confirm(
@@ -691,18 +696,18 @@ function handleExport(row) {
           StartDate: dateValue.value[0],
           EndDate: dateValue.value[1],
         };
+        console.log(date,'选定时间范围');
         downLoad(
           row.key,
-          `summary_${new Date().toLocaleDateString("zh-CN", {
+          `${row.name}_${new Date().toLocaleDateString("zh-CN", {
             year: "2-digit",
             month: "2-digit",
             day: "2-digit",
           })}.xlsx`,
           JSON.stringify(date)
-        )
+        );
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   }
 }
 
@@ -817,6 +822,7 @@ function disabledDate(date) {
   align-items: center;
   justify-content: space-around;
 }
+
 .my-header {
   display: flex;
   flex-direction: row;

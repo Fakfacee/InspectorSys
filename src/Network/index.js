@@ -11,7 +11,7 @@ import {
 
 const instance = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 20000,
+  timeout: 40000,
   headers: {
     "Content-Type": "application/json",
   },
